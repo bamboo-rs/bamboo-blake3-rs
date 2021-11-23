@@ -1,4 +1,4 @@
-# bamboo-rs
+# bamboo-blake3-rs
 
 > Rust implementation of [bamboo-blake3](https://github.com/bamboo-rs/bamboo-blake3).
 
