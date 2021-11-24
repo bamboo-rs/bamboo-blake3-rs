@@ -12,8 +12,8 @@ pub use decode::decode;
 pub use publish::publish;
 pub use verify::verify;
 
-//#[cfg(feature = "std")]
-//pub use verify::verify_batch;
+#[cfg(feature = "std")]
+pub use verify::verify_batch;
 
 #[cfg(feature = "std")]
 use crate::util::hex_serde::*;

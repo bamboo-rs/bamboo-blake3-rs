@@ -6,8 +6,8 @@ mod tests {
     use bamboo_rs_core::entry::verify::Error as VerifyError;
     use bamboo_rs_core::entry::verify_batch;
     use bamboo_rs_core::signature::ED25519_SIGNATURE_SIZE;
-    use bamboo_rs_core::yamf_hash::BLAKE2B_HASH_SIZE;
-    use bamboo_rs_core::{publish, verify, Entry, Signature, YamfHash};
+    use bamboo_rs_core::{HASH_LEN, Hash};
+    use bamboo_rs_core::{publish, verify, Entry, Signature};
     use ed25519_dalek::{Keypair, PublicKey};
     use rand::rngs::OsRng;
     use std::io::Write;
@@ -15,10 +15,10 @@ mod tests {
 
     #[test]
     fn encode_write_decode_entry() {
-        let backlink_bytes = [0xAA; BLAKE2B_HASH_SIZE];
-        let backlink = YamfHash::<&[u8]>::Blake2b(backlink_bytes[..].into());
-        let payload_hash_bytes = [0xAB; BLAKE2B_HASH_SIZE];
-        let payload_hash = YamfHash::<&[u8]>::Blake2b(payload_hash_bytes[..].into());
+        let backlink_bytes = [0xAA; HASH_LEN];
+        let backlink: Hash = backlink_bytes.into();
+        let payload_hash_bytes = [0xAB; HASH_LEN];
+        let payload_hash: Hash = payload_hash_bytes.into();
         let payload_size = 512;
         let seq_num = 2;
         let log_id = 333;
@@ -34,25 +34,15 @@ mod tests {
         varu64_encode_write(log_id, &mut entry_vec).unwrap();
         varu64_encode_write(seq_num, &mut entry_vec).unwrap();
         //lipmaa_link.encode_write(&mut entry_vec).unwrap();
-        backlink.encode_write(&mut entry_vec).unwrap();
+        entry_vec.write_all(backlink.as_bytes()).unwrap();
         varu64_encode_write(payload_size, &mut entry_vec).unwrap();
-        payload_hash.encode_write(&mut entry_vec).unwrap();
+        entry_vec.write_all(payload_hash.as_bytes()).unwrap();
         sig.encode_write(&mut entry_vec).unwrap();
 
         let entry = decode(&entry_vec).unwrap();
 
-        match entry.payload_hash {
-            YamfHash::Blake2b(ref hash) => {
-                assert_eq!(hash.as_ref(), &payload_hash_bytes[..]);
-            }
-        }
-
-        match entry.backlink {
-            Some(YamfHash::Blake2b(ref hash)) => {
-                assert_eq!(hash.as_ref(), &backlink_bytes[..]);
-            }
-            _ => panic!(),
-        }
+        assert_eq!(entry.payload_hash, payload_hash);
+        assert_eq!(entry.backlink, Some(backlink));
 
         match entry.sig {
             Some(Signature(ref sig)) => {
@@ -328,7 +318,7 @@ mod tests {
 
         let string = serde_json::to_string(&entry).unwrap();
 
-        let parsed: Entry<Vec<u8>, Vec<u8>> = serde_json::from_str(&string).unwrap();
+        let parsed: Entry<Vec<u8>> = serde_json::from_str(&string).unwrap();
 
         assert_eq!(parsed.payload_hash, entry.payload_hash);
     }

@@ -20,7 +20,7 @@
 //! require passing the previous seq_num, the previous entry, and lipmaa_link.
 //!
 //! ```
-//! use bamboo_rs_core::{publish, verify, decode, yamf_hash::new_blake2b, Entry, Signature, YamfHash, Keypair, entry::MAX_ENTRY_SIZE};
+//! use bamboo_rs_core::{publish, verify, decode, hash, Entry, Signature, Keypair, entry::MAX_ENTRY_SIZE};
 //! use rand::rngs::OsRng;
 //!
 //! let mut csprng: OsRng = OsRng {};
@@ -45,7 +45,7 @@
 //! let entry = decode(&out[..size]).unwrap();
 //!
 //! let is_verified = verify(&out[..size], Some(payload.as_bytes()), None, None).is_ok();
-//! let payload_hash = new_blake2b(payload.as_bytes());
+//! let payload_hash = hash(payload.as_bytes());
 //!
 //! assert!(is_verified);
 //! assert_eq!(entry.log_id, log_id);
@@ -68,8 +68,9 @@ pub mod signature;
 mod util;
 
 pub use ed25519_dalek::{Keypair, PublicKey, SecretKey, SignatureError};
-//#[cfg(feature = "std")]
-//pub use entry::verify::verify_batch;
+
+#[cfg(feature = "std")]
+pub use entry::verify::verify_batch;
 pub use entry::{decode, publish, verify, Entry};
 pub use lipmaa_link::lipmaa;
 pub use signature::{Signature, ED25519_SIGNATURE_SIZE};

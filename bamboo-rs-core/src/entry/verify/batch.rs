@@ -1,5 +1,4 @@
-use crate::BLAKE2B_HASH_SIZE;
-use arrayvec::ArrayVec;
+use crate::hash;
 use core::borrow::Borrow;
 use core::convert::TryFrom;
 use ed25519_dalek::PublicKey;
@@ -12,14 +11,9 @@ use ed25519_dalek::Signature as DalekSignature;
 #[cfg(feature = "std")]
 use ed25519_dalek::verify_batch as verify_batch_dalek;
 
-use crate::yamf_hash::YamfHash;
-
 use super::verify_links_and_payload;
 use super::Entry;
 use rayon::prelude::*;
-
-#[cfg(feature = "std")]
-use blake2b_simd::blake2b;
 
 use super::error::*;
 
@@ -49,11 +43,11 @@ pub fn verify_batch_links_and_payload<E: AsRef<[u8]> + Sync, P: AsRef<[u8]> + Sy
         .par_iter()
         .map(|(bytes, payload)| {
             let entry = Entry::try_from(bytes.as_ref()).context(DecodeEntry)?;
-            let entry_hash = blake2b(bytes.as_ref()); //HashManyJob::new(&params, bytes.as_ref());
+            let entry_hash = hash(bytes.as_ref()); //HashManyJob::new(&params, bytes.as_ref());
 
             let payload_and_hash = payload
                 .as_ref()
-                .map(|payload| (payload.as_ref(), blake2b(payload.as_ref())));
+                .map(|payload| (payload.as_ref(), hash(payload.as_ref())));
 
             Ok((
                 entry.seq_num,
@@ -65,17 +59,13 @@ pub fn verify_batch_links_and_payload<E: AsRef<[u8]> + Sync, P: AsRef<[u8]> + Sy
     hash_map
         .par_iter()
         .map(|(seq_num, (_, entry, _, payload_and_hash))| {
-            let backlink_and_hash = hash_map.get(&(seq_num - 1)).map(
-                |(bytes, _, entry_hash, _)| -> (_, YamfHash<ArrayVec<[u8; BLAKE2B_HASH_SIZE]>>) {
-                    (*bytes, (*entry_hash).into())
-                },
-            );
+            let backlink_and_hash = hash_map
+                .get(&(seq_num - 1))
+                .map(|(bytes, _, entry_hash, _)| (*bytes, *entry_hash));
 
-            let lipmaa_link_and_hash = hash_map.get(&(lipmaa_link::lipmaa(*seq_num))).map(
-                |(bytes, _, entry_hash, _)| -> (_, YamfHash<ArrayVec<[u8; BLAKE2B_HASH_SIZE]>>) {
-                    (*bytes, (*entry_hash).into())
-                },
-            );
+            let lipmaa_link_and_hash = hash_map
+                .get(&(lipmaa_link::lipmaa(*seq_num)))
+                .map(|(bytes, _, entry_hash, _)| (*bytes, *entry_hash));
 
             let payload_and_hash = payload_and_hash
                 .as_ref()
