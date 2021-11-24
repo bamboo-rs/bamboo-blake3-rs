@@ -1,5 +1,6 @@
 use core::borrow::Borrow;
-use snafu::{ensure, ResultExt};
+use blake3::{Hash, OUT_LEN as HASH_LEN};
+use snafu::{ensure, ResultExt, OptionExt};
 
 #[cfg(feature = "std")]
 use std::io::Write;
@@ -56,18 +57,12 @@ where
         // Encode the backlink and lipmaa links if its not the first sequence
         next_byte_num = match (self.seq_num, &self.backlink, &self.lipmaa_link) {
             (n, Some(ref backlink), Some(ref lipmaa_link)) if n > 1 => {
-                next_byte_num += lipmaa_link
-                    .encode(&mut out[next_byte_num..])
-                    .context(EncodeLipmaaError)?;
-                next_byte_num += backlink
-                    .encode(&mut out[next_byte_num..])
-                    .context(EncodeBacklinkError)?;
+                next_byte_num += encode_hash(out, lipmaa_link).context(EncodeLipmaaError)?;
+                next_byte_num += encode_hash(out, backlink).context(EncodeBacklinkError)?;
                 Ok(next_byte_num)
             }
             (n, Some(ref backlink), None) if n > 1 => {
-                next_byte_num += backlink
-                    .encode(&mut out[next_byte_num..])
-                    .context(EncodeBacklinkError)?;
+                next_byte_num += encode_hash(out, backlink).context(EncodeBacklinkError)?;
                 Ok(next_byte_num)
             }
             (n, Some(_), Some(_)) if n <= 1 => Err(Error::EncodeEntryHasLinksWhenSeqZero),
@@ -78,10 +73,7 @@ where
         next_byte_num += varu64_encode(self.payload_size, &mut out[next_byte_num..]);
 
         // Encode the payload hash
-        next_byte_num += self
-            .payload_hash
-            .encode(&mut out[next_byte_num..])
-            .context(EncodePayloadHashError)?;
+        next_byte_num += encode_hash(out, &self.payload_hash).context(EncodePayloadHashError)?;
 
         Ok(next_byte_num as usize)
     }
@@ -113,14 +105,15 @@ where
         // Encode the backlink and lipmaa links if its not the first sequence
         match (self.seq_num, &self.backlink, &self.lipmaa_link) {
             (n, Some(ref backlink), Some(ref lipmaa_link)) if n > 1 => {
-                lipmaa_link
-                    .encode_write(&mut w)
-                    .context(EncodeLipmaaError)?;
+                w.write_all(lipmaa_link.as_bytes())
+                    .map_err(|_| Error::EncodeLipmaaError)?;
 
-                backlink.encode_write(&mut w).context(EncodeBacklinkError)
+                w.write_all(backlink.as_bytes())
+                    .map_err(|_| Error::EncodeBacklinkError)
             }
             (n, Some(ref backlink), None) if n > 1 => {
-                backlink.encode_write(&mut w).context(EncodeBacklinkError)
+                w.write_all(backlink.as_bytes())
+                    .map_err(|_| Error::EncodeBacklinkError)
             }
             (n, Some(_), Some(_)) if n <= 1 => Err(Error::EncodeEntryHasLinksWhenSeqZero),
             (n, None, Some(_)) if n <= 1 => Err(Error::EncodeEntryHasLinksWhenSeqZero),
@@ -133,9 +126,8 @@ where
             .map_err(|_| Error::EncodePayloadSizeError)?;
 
         // Encode the payload hash
-        self.payload_hash
-            .encode_write(&mut w)
-            .context(EncodePayloadHashError)?;
+        w.write_all(self.payload_hash.as_bytes())
+            .map_err(|_| Error::EncodePayloadHashError)?;
 
         Ok(())
     }
@@ -154,7 +146,7 @@ where
 
     pub fn encoding_length(&self) -> usize {
         TAG_BYTE_LENGTH
-            + self.payload_hash.encoding_length()
+            + HASH_LEN
             + varu64_encoding_length(self.payload_size)
             + varu64_encoding_length(self.log_id)
             + self.author.as_bytes().len()
@@ -162,12 +154,12 @@ where
             + self
                 .backlink
                 .as_ref()
-                .map(|backlink| backlink.encoding_length())
+                .map(|_|HASH_LEN )
                 .unwrap_or(0)
             + self
                 .lipmaa_link
                 .as_ref()
-                .map(|lipmaa_link| lipmaa_link.encoding_length())
+                .map(|_| HASH_LEN )
                 .unwrap_or(0)
             + self
                 .sig
@@ -175,4 +167,9 @@ where
                 .map(|sig| sig.encoding_length())
                 .unwrap_or(0)
     }
+}
+
+fn encode_hash(buff: &mut[u8], hash: &Hash) -> Option<usize>{
+    buff.get_mut(..HASH_LEN).map(|slic| slic.clone_from_slice(hash.as_bytes()))
+        .map(|_|HASH_LEN)
 }

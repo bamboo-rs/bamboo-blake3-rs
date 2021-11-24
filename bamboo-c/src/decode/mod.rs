@@ -1,6 +1,6 @@
 use bamboo_rs_core::entry::decode;
 use bamboo_rs_core::signature::ED25519_SIGNATURE_SIZE;
-use bamboo_rs_core::yamf_hash::{YamfHash, BLAKE2B_HASH_SIZE};
+use bamboo_rs_core::HASH_LEN;
 use core::slice;
 use ed25519_dalek::PUBLIC_KEY_LENGTH;
 
@@ -11,13 +11,13 @@ use error::DecodeError;
 pub struct CEntry {
     pub log_id: u64,
     pub is_end_of_feed: bool,
-    pub payload_hash_bytes: [u8; BLAKE2B_HASH_SIZE],
+    pub payload_hash_bytes: [u8; HASH_LEN],
     pub payload_length: u64,
     pub author: [u8; PUBLIC_KEY_LENGTH],
     pub seq_num: u64,
-    pub backlink: [u8; BLAKE2B_HASH_SIZE],
+    pub backlink: [u8; HASH_LEN],
     pub has_backlink: bool,
-    pub lipmaa_link: [u8; BLAKE2B_HASH_SIZE],
+    pub lipmaa_link: [u8; HASH_LEN],
     pub has_lipmaa_link: bool,
     pub sig: [u8; ED25519_SIGNATURE_SIZE],
 }
@@ -53,23 +53,9 @@ pub extern "C" fn decode_ed25519_blake2b_entry(
                 args.out_decoded_entry.sig[..].copy_from_slice(&sig.0[..]);
             });
 
-            entry.lipmaa_link.map(|lipmaa_link| match lipmaa_link {
-                YamfHash::Blake2b(bytes) => {
-                    args.out_decoded_entry.lipmaa_link[..].copy_from_slice(&bytes[..]);
-                }
-            });
-
-            entry.backlink.map(|backlink| match backlink {
-                YamfHash::Blake2b(bytes) => {
-                    args.out_decoded_entry.backlink[..].copy_from_slice(&bytes[..]);
-                }
-            });
-
-            match entry.payload_hash {
-                YamfHash::Blake2b(bytes) => {
-                    args.out_decoded_entry.payload_hash_bytes[..].copy_from_slice(&bytes[..]);
-                }
-            };
+            entry.lipmaa_link.map(|lipmaa_link| args.out_decoded_entry.lipmaa_link[..].copy_from_slice(lipmaa_link.as_bytes()));
+            entry.backlink.map(|backlink| args.out_decoded_entry.backlink[..].copy_from_slice(backlink.as_bytes()));
+            args.out_decoded_entry.payload_hash_bytes[..].copy_from_slice(entry.payload_hash.as_bytes());
 
             args.out_decoded_entry.author[..].copy_from_slice(&entry.author.as_bytes()[..]);
 

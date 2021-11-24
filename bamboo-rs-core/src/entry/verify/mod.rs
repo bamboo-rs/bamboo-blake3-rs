@@ -7,8 +7,10 @@ use ed25519_dalek::{Signature as DalekSignature, Verifier};
 use super::{decode::decode, is_lipmaa_required, Entry};
 use blake3::{Hash, hash};
 
-#[cfg(feature = "std")]
-pub mod batch;
+// TODO
+//#[cfg(feature = "std")]
+//pub mod batch;
+
 //#[cfg(feature = "std")]
 //pub use batch::{verify_batch, verify_batch_signatures};
 

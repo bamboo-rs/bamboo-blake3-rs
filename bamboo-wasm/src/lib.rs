@@ -7,8 +7,7 @@ use bamboo_rs_core::entry::{
     decode as decode_entry, into_owned, publish as publish_entry, verify as verify_entry,
     MAX_ENTRY_SIZE,
 };
-use bamboo_rs_core::yamf_hash::new_blake2b;
-use bamboo_rs_core::{lipmaa, Entry, YamfHash};
+use bamboo_rs_core::{hash, lipmaa, Entry, Hash};
 use bamboo_rs_core::{Keypair, PublicKey, SecretKey, Signature};
 use rand::rngs::OsRng;
 use wasm_bindgen::prelude::*;
@@ -34,42 +33,36 @@ pub fn max_entry_size() -> u32 {
 
 #[wasm_bindgen(inspectable)]
 pub struct BambooEntry {
-    hash: YamfHash<ArrayVec<[u8; 64]>>,
-    value: Entry<ArrayVec<[u8; 64]>, ArrayVec<[u8; 64]>>,
+    hash: Hash,
+    value: Entry<ArrayVec<[u8; 64]>>,
 }
 
 #[wasm_bindgen]
 impl BambooEntry {
     #[wasm_bindgen(getter, js_name = "entryHash")]
     pub fn hash(&self) -> Box<[u8]> {
-        let mut out = Vec::new();
-        self.hash.encode_write(&mut out).unwrap();
-        out.into()
+        Box::new(*self.hash.as_bytes())
     }
 
     #[wasm_bindgen(getter, js_name = "payloadHash")]
     pub fn payload_hash(&self) -> Box<[u8]> {
-        let mut out = Vec::new();
-        self.value.payload_hash.encode_write(&mut out).unwrap();
-        out.into()
+        Box::new(*self.value.payload_hash.as_bytes())
     }
 
     #[wasm_bindgen(getter, js_name = "lipmaaLinkHash")]
     pub fn lipmaa_link(&self) -> Option<Box<[u8]>> {
-        self.value.lipmaa_link.as_ref().map(|hash| {
-            let mut out = Vec::new();
-            hash.encode_write(&mut out).unwrap();
-            out.into()
-        })
+        self.value
+            .lipmaa_link
+            .as_ref()
+            .map(|hash| hash.as_bytes()[..].into())
     }
 
     #[wasm_bindgen(getter, js_name = "backLinkHash")]
     pub fn back_link(&self) -> Option<Box<[u8]>> {
-        self.value.backlink.as_ref().map(|hash| {
-            let mut out = Vec::new();
-            hash.encode_write(&mut out).unwrap();
-            out.into()
-        })
+        self.value
+            .backlink
+            .as_ref()
+            .map(|hash| hash.as_bytes()[..].into())
     }
 
     #[wasm_bindgen(getter)]
@@ -108,12 +101,12 @@ impl BambooEntry {
 
 #[wasm_bindgen]
 pub fn decode(buffer: &[u8]) -> Result<BambooEntry, JsValue> {
-    let hash = new_blake2b(buffer);
+    let hash = hash(buffer);
     let entry = decode_entry(buffer).map_err(|err| JsValue::from_str(&err.to_string()))?;
 
     let entry = into_owned(&entry);
     let bamboo_entry = BambooEntry {
-        hash: hash,
+        hash,
         value: entry,
     };
 

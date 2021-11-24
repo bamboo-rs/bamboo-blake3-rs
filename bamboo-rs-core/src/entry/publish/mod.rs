@@ -1,9 +1,6 @@
-pub use crate::BLAKE2B_HASH_SIZE;
-
 use super::decode::decode;
 use super::{is_lipmaa_required, Entry};
 use crate::signature::Signature;
-use crate::yamf_hash::new_blake2b;
 use blake3::hash;
 use ed25519_dalek::{Keypair, Signer};
 use snafu::{ensure, ResultExt};
