@@ -1,4 +1,3 @@
-use arrayvec::ArrayVec;
 use core::borrow::Borrow;
 use core::convert::TryFrom;
 use snafu::{ensure, NoneError, ResultExt};
@@ -6,20 +5,18 @@ use snafu::{ensure, NoneError, ResultExt};
 use ed25519_dalek::{Signature as DalekSignature, Verifier};
 
 use super::{decode::decode, is_lipmaa_required, Entry};
-use crate::yamf_hash::new_blake2b;
-use crate::yamf_hash::YamfHash;
+use blake3::{Hash, hash};
 
 #[cfg(feature = "std")]
 pub mod batch;
-#[cfg(feature = "std")]
-pub use batch::{verify_batch, verify_batch_signatures};
+//#[cfg(feature = "std")]
+//pub use batch::{verify_batch, verify_batch_signatures};
 
 pub mod error;
 pub use error::*;
 
-impl<'a, H, S> Entry<H, S>
+impl<'a, S> Entry<S>
 where
-    H: Borrow<[u8]>,
     S: Borrow<[u8]>,
 {
     /// Verify the signature of an entry is valid.
@@ -42,10 +39,10 @@ where
 }
 
 pub fn verify_links_and_payload(
-    entry: &Entry<&[u8], &[u8]>,
-    payload: Option<(&[u8], YamfHash<ArrayVec<[u8; 64]>>)>,
-    lipmaa_link: Option<(&[u8], YamfHash<ArrayVec<[u8; 64]>>)>,
-    backlink: Option<(&[u8], YamfHash<ArrayVec<[u8; 64]>>)>,
+    entry: &Entry<&[u8]>,
+    payload: Option<(&[u8], Hash)>,
+    lipmaa_link: Option<(&[u8], Hash)>,
+    backlink: Option<(&[u8], Hash)>,
 ) -> Result<(), Error> {
     // If we have the payload, check that its hash and length match what is encoded in the
     // entry.
@@ -162,9 +159,9 @@ pub fn verify(
     // Decode the entry that we want to verify.
     let entry = decode(entry_bytes).context(DecodeEntry)?;
 
-    let payload_and_hash = payload.map(|payload| (payload, new_blake2b(payload)));
-    let lipmaa_link_and_hash = lipmaa_link.map(|link| (link, new_blake2b(link)));
-    let backlink_and_hash = backlink.map(|link| (link, new_blake2b(link)));
+    let payload_and_hash = payload.map(|payload| (payload, hash(payload)));
+    let lipmaa_link_and_hash = lipmaa_link.map(|link| (link, hash(link)));
+    let backlink_and_hash = backlink.map(|link| (link, hash(link)));
 
     verify_links_and_payload(
         &entry,

@@ -4,6 +4,7 @@ use super::decode::decode;
 use super::{is_lipmaa_required, Entry};
 use crate::signature::Signature;
 use crate::yamf_hash::new_blake2b;
+use blake3::hash;
 use ed25519_dalek::{Keypair, Signer};
 use snafu::{ensure, ResultExt};
 
@@ -35,12 +36,12 @@ pub fn publish(
     let author = key_pair.public;
 
     // calc the payload hash
-    let payload_hash = new_blake2b(payload);
+    let payload_hash = hash(payload);
     let payload_size = payload.len() as u64;
 
     let seq_num = previous_seq_num.unwrap_or(0) + 1;
 
-    let mut entry: Entry<_, &[u8]> = Entry {
+    let mut entry: Entry<&[u8]> = Entry {
         log_id,
         is_end_of_feed,
         payload_hash,
@@ -86,14 +87,14 @@ pub fn publish(
             PublishWithIncorrectLipmaaLinkLogId
         );
 
-        let backlink = new_blake2b(backlink_bytes.ok_or(Error::PublishWithoutBacklinkEntry)?);
+        let backlink = hash(backlink_bytes.ok_or(Error::PublishWithoutBacklinkEntry)?);
         entry.backlink = Some(backlink);
 
         // If the lipmaalink and backlink would be different, we should append the lipmaalink,
         // otherwise we're allowed to omit it to save some bytes.
         if is_lipmaa_required(seq_num) {
             let lipmaa_link =
-                new_blake2b(lipmaa_entry_bytes.ok_or(Error::PublishWithoutLipmaaEntry)?);
+                hash(lipmaa_entry_bytes.ok_or(Error::PublishWithoutLipmaaEntry)?);
             entry.lipmaa_link = Some(lipmaa_link);
         }
     }

@@ -2,6 +2,7 @@ use core::borrow::Borrow;
 use ed25519_dalek::PublicKey as DalekPublicKey;
 use serde::de::Error;
 use serde::{Deserialize, Deserializer, Serializer};
+use blake3::Hash;
 
 #[cfg(feature = "std")]
 pub fn serialize_pub_key<S>(public_key: &DalekPublicKey, serializer: S) -> Result<S::Ok, S::Error>
@@ -33,6 +34,65 @@ where
     }
 }
 
+pub fn hash_opt_from_hex<'de, D>(deserializer: D) -> Result<Option<Hash>, D::Error>
+where
+    D: Deserializer<'de>,
+{
+    if deserializer.is_human_readable() {
+        let s: Option<&str> = Deserialize::deserialize(deserializer)?;
+
+        let hash = s
+            .map(|s: &str| Hash::from_hex(s).unwrap());
+        Ok(hash)
+    } else {
+        let bytes: Option<[u8; 32]> = Deserialize::deserialize(deserializer)?;
+
+        Ok(bytes.map(|bytes| Hash::from(bytes)))
+    }
+}
+
+pub fn hash_from_hex<'de, D>(deserializer: D) -> Result<Hash, D::Error>
+where
+    D: Deserializer<'de>,
+{
+    if deserializer.is_human_readable() {
+        let s: &str = Deserialize::deserialize(deserializer)?;
+        Ok(Hash::from_hex(s).unwrap())
+    } else {
+        let bytes: [u8; 32] = Deserialize::deserialize(deserializer)?;
+        Ok(Hash::from(bytes))
+    }
+}
+
+pub fn hex_from_hash<S>(hash: &Hash, serializer: S) -> Result<S::Ok, S::Error>
+where
+    S: Serializer,
+{
+    if serializer.is_human_readable() {
+        serializer.serialize_str(&hash.to_hex())
+    } else {
+        serializer.serialize_bytes(hash.as_bytes())
+    }
+}
+
+pub fn hex_opt_from_hash<S>(hash: &Option<Hash>, serializer: S) -> Result<S::Ok, S::Error>
+where
+    S: Serializer,
+{
+    if serializer.is_human_readable() {
+        match hash {
+            Some(hash) =>serializer.serialize_some(hash.to_hex().as_str()),
+            None => serializer.serialize_none()
+
+        }
+    } else {
+        match hash {
+            Some(hash) =>serializer.serialize_some(hash.as_bytes()),
+            None => serializer.serialize_none()
+
+        }
+    }
+}
 pub fn vec_from_hex<'de, D, B>(deserializer: D) -> Result<B, D::Error>
 where
     D: Deserializer<'de>,
@@ -47,6 +107,7 @@ where
         Ok(B::from(bytes.to_owned()))
     }
 }
+
 pub fn hex_from_bytes<'de, S, B>(bytes: &B, serializer: S) -> Result<S::Ok, S::Error>
 where
     S: Serializer,

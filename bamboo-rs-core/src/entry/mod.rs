@@ -12,8 +12,8 @@ pub use decode::decode;
 pub use publish::publish;
 pub use verify::verify;
 
-#[cfg(feature = "std")]
-pub use verify::verify_batch;
+//#[cfg(feature = "std")]
+//pub use verify::verify_batch;
 
 #[cfg(feature = "std")]
 use crate::util::hex_serde::*;
@@ -24,7 +24,7 @@ use serde::{Deserialize, Serialize};
 use ed25519_dalek::PublicKey as DalekPublicKey;
 
 use super::signature::{Signature, MAX_SIGNATURE_SIZE};
-use super::yamf_hash::{YamfHash, MAX_YAMF_HASH_SIZE};
+use blake3::{Hash, OUT_LEN as MAX_HASH_SIZE};
 
 pub use ed25519_dalek::PUBLIC_KEY_LENGTH;
 pub const TAG_BYTE_LENGTH: usize = 1;
@@ -32,11 +32,11 @@ pub const MAX_VARU64_SIZE: usize = 9;
 pub const MAX_ENTRY_SIZE_: usize = TAG_BYTE_LENGTH
     + MAX_SIGNATURE_SIZE
     + PUBLIC_KEY_LENGTH
-    + (MAX_YAMF_HASH_SIZE * 3)
+    + (MAX_HASH_SIZE * 3)
     + (MAX_VARU64_SIZE * 3);
 
 /// This is useful if you need to know at compile time how big an entry can get.
-pub const MAX_ENTRY_SIZE: usize = 322;
+pub const MAX_ENTRY_SIZE: usize = 226;
 
 // Yes, this is hacky. It's because cbindgen can't understand how to add consts together. This is a
 // way to hard code a value for MAX_ENTRY_SIZE that cbindgen can use, but make sure at compile time
@@ -47,15 +47,17 @@ const_assert_eq!(max_entry_size; MAX_ENTRY_SIZE_ as isize, MAX_ENTRY_SIZE as isi
 #[cfg_attr(feature = "std", serde(rename_all = "camelCase"))]
 #[derive(Debug, Eq, PartialEq)]
 #[repr(C)]
-pub struct Entry<H, S>
+pub struct Entry<S>
 where
-    H: Borrow<[u8]>,
     S: Borrow<[u8]>,
 {
     pub log_id: u64,
     pub is_end_of_feed: bool,
-    #[cfg_attr(feature = "std", serde(bound(deserialize = "H: From<Vec<u8>>")))]
-    pub payload_hash: YamfHash<H>,
+    #[cfg_attr(
+        feature = "std",
+        serde(serialize_with = "hex_from_hash", deserialize_with = "hash_from_hex")
+    )]
+    pub payload_hash: Hash,
     pub payload_size: u64,
     #[cfg_attr(
         feature = "std",
@@ -66,28 +68,35 @@ where
     )]
     pub author: DalekPublicKey,
     pub seq_num: u64,
-    pub backlink: Option<YamfHash<H>>,
-    pub lipmaa_link: Option<YamfHash<H>>,
+    #[cfg_attr(
+        feature = "std",
+        serde(serialize_with = "hex_opt_from_hash", deserialize_with = "hash_opt_from_hex")
+    )]
+    pub backlink: Option<Hash>,
+    #[cfg_attr(
+        feature = "std",
+        serde(serialize_with = "hex_opt_from_hash", deserialize_with = "hash_opt_from_hex")
+    )]
+    pub lipmaa_link: Option<Hash>,
     #[cfg_attr(feature = "std", serde(bound(deserialize = "S: From<Vec<u8>>")))]
     pub sig: Option<Signature<S>>,
 }
 
-impl<'a> TryFrom<&'a [u8]> for Entry<&'a [u8], &'a [u8]> {
+impl<'a> TryFrom<&'a [u8]> for Entry<&'a [u8]> {
     type Error = decode::Error;
 
-    fn try_from(bytes: &'a [u8]) -> Result<Entry<&'a [u8], &'a [u8]>, Self::Error> {
+    fn try_from(bytes: &'a [u8]) -> Result<Entry<&'a [u8]>, Self::Error> {
         decode(bytes)
     }
 }
 
-impl<'a, H, S> TryFrom<Entry<H, S>> for ArrayVec<[u8; 512]>
+impl<'a, S> TryFrom<Entry<S>> for ArrayVec<[u8; 512]>
 where
-    H: Borrow<[u8]>,
     S: Borrow<[u8]>,
 {
     type Error = encode::Error;
 
-    fn try_from(entry: Entry<H, S>) -> Result<ArrayVec<[u8; 512]>, Self::Error> {
+    fn try_from(entry: Entry<S>) -> Result<ArrayVec<[u8; 512]>, Self::Error> {
         let mut buff = [0u8; 512];
         let len = entry.encode(&mut buff)?;
         let mut vec = ArrayVec::<[u8; 512]>::from(buff);
@@ -98,9 +107,8 @@ where
     }
 }
 
-pub fn into_owned<H, S>(entry: &Entry<H, S>) -> Entry<ArrayVec<[u8; 64]>, ArrayVec<[u8; 64]>>
+pub fn into_owned<S>(entry: &Entry<S>) -> Entry<ArrayVec<[u8; 64]>>
 where
-    H: Borrow<[u8]>,
     S: Borrow<[u8]>,
 {
     let sig = match entry.sig {
@@ -112,31 +120,11 @@ where
         None => None,
     };
 
-    let payload_hash = match entry.payload_hash {
-        YamfHash::Blake2b(ref s) => {
-            let mut vec = ArrayVec::<[u8; 64]>::new();
-            vec.try_extend_from_slice(&s.borrow()[..]).unwrap();
-            YamfHash::Blake2b(vec)
-        }
-    };
+    let payload_hash = entry.payload_hash.clone();
 
-    let backlink = match entry.backlink {
-        Some(YamfHash::Blake2b(ref s)) => {
-            let mut vec = ArrayVec::<[u8; 64]>::new();
-            vec.try_extend_from_slice(&s.borrow()[..]).unwrap();
-            Some(YamfHash::Blake2b(vec))
-        }
-        None => None,
-    };
+    let backlink = entry.backlink.map(|backlink| backlink.clone());
 
-    let lipmaa_link = match entry.lipmaa_link {
-        Some(YamfHash::Blake2b(ref s)) => {
-            let mut vec = ArrayVec::<[u8; 64]>::new();
-            vec.try_extend_from_slice(&s.borrow()[..]).unwrap();
-            Some(YamfHash::Blake2b(vec))
-        }
-        None => None,
-    };
+    let lipmaa_link = entry.lipmaa_link.map(|lipmaa_link| lipmaa_link.clone());
 
     Entry {
         is_end_of_feed: entry.is_end_of_feed,

@@ -12,9 +12,8 @@ use super::{Entry, TAG_BYTE_LENGTH};
 pub mod error;
 pub use error::*;
 
-impl<'a, H, S> Entry<H, S>
+impl<'a, S> Entry<S>
 where
-    H: Borrow<[u8]>,
     S: Borrow<[u8]>,
 {
     pub fn encode(&self, out: &mut [u8]) -> Result<usize, Error> {

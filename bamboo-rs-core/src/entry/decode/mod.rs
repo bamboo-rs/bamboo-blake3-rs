@@ -3,7 +3,9 @@ use varu64::decode as varu64_decode;
 use ed25519_dalek::{PublicKey as DalekPublicKey, PUBLIC_KEY_LENGTH};
 
 use crate::signature::Signature;
-use crate::yamf_hash::YamfHash;
+use blake3::{Hash, OUT_LEN as HASH_LEN};
+use core::array::TryFromSliceError;
+use core::convert::TryInto;
 
 use super::{is_lipmaa_required, Entry};
 use snafu::{ensure, NoneError, ResultExt};
@@ -14,7 +16,7 @@ pub use error::*;
 /// Try and decode `bytes` as an [Entry].
 ///
 /// Returned [Entry] references `bytes`.
-pub fn decode<'a>(bytes: &'a [u8]) -> Result<Entry<&'a [u8], &'a [u8]>, Error> {
+pub fn decode<'a>(bytes: &'a [u8]) -> Result<Entry<&'a [u8]>, Error> {
     ensure!(bytes.len() > 0, DecodeInputIsLengthZero);
 
     // Decode is end of feed
@@ -46,15 +48,13 @@ pub fn decode<'a>(bytes: &'a [u8]) -> Result<Entry<&'a [u8], &'a [u8]>, Error> {
     let (backlink, lipmaa_link, remaining_bytes) = match (seq_num, lipmaa_is_required) {
         (1, _) => (None, None, remaining_bytes),
         (_, true) => {
-            let (lipmaa_link, remaining_bytes) =
-                YamfHash::<&[u8]>::decode(remaining_bytes).context(DecodeLipmaaError)?;
-            let (backlink, remaining_bytes) =
-                YamfHash::<&[u8]>::decode(remaining_bytes).context(DecodeBacklinkError)?;
+            let (lipmaa_link, remaining_bytes) = decode_blake3_hash(&remaining_bytes).context(DecodeLipmaaError)?;
+
+            let (backlink, remaining_bytes) = decode_blake3_hash(&remaining_bytes).context(DecodeBacklinkError)?;
             (Some(backlink), Some(lipmaa_link), remaining_bytes)
         }
         (_, false) => {
-            let (backlink, remaining_bytes) =
-                YamfHash::<&[u8]>::decode(remaining_bytes).context(DecodeBacklinkError)?;
+            let (backlink, remaining_bytes) = decode_blake3_hash(&remaining_bytes).context(DecodeBacklinkError)?;
             (Some(backlink), None, remaining_bytes)
         }
     };
@@ -66,7 +66,7 @@ pub fn decode<'a>(bytes: &'a [u8]) -> Result<Entry<&'a [u8], &'a [u8]>, Error> {
 
     // Decode the payload hash
     let (payload_hash, remaining_bytes) =
-        YamfHash::<&[u8]>::decode(remaining_bytes).context(DecodePayloadHashError)?;
+        decode_blake3_hash(&remaining_bytes).context(DecodePayloadHashError)?;
 
     // Decode the signature
     let (sig, _) = Signature::<&[u8]>::decode(remaining_bytes).context(DecodeSigError)?;
@@ -82,4 +82,12 @@ pub fn decode<'a>(bytes: &'a [u8]) -> Result<Entry<&'a [u8], &'a [u8]>, Error> {
         lipmaa_link,
         sig: Some(sig),
     })
+}
+
+fn decode_blake3_hash<'a>(slice: &'a [u8]) -> Result<(Hash, &'a [u8]), TryFromSliceError> {
+    let array: [u8; HASH_LEN] = slice[..HASH_LEN].try_into()?;
+    let hash = Hash::from(array);
+    let remaining_bytes = &slice[HASH_LEN..];
+
+    Ok((hash, remaining_bytes))
 }
