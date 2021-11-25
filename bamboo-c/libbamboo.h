@@ -3,23 +3,10 @@
 #include <stdint.h>
 #include <stdlib.h>
 
-#define TAG_BYTE_LENGTH 1
-
-#define MAX_VARU64_SIZE 9
-
-#define MAX_ENTRY_SIZE_ ((((TAG_BYTE_LENGTH + MAX_SIGNATURE_SIZE) + PUBLIC_KEY_LENGTH) + (MAX_YAMF_HASH_SIZE * 3)) + (MAX_VARU64_SIZE * 3))
-
 /**
- * This is useful if you need to know at compile time how big an entry can get.
+ * The length of a blake3 hash, in bytes.
  */
-#define MAX_ENTRY_SIZE 322
-
-#define ED25519_SIGNATURE_SIZE 64
-
-/**
- * The maximum number of bytes this will use.
- */
-#define MAX_SIGNATURE_SIZE ED25519_SIGNATURE_SIZE
+#define HASH_LEN 32
 
 /**
  * The length of a ed25519 `Signature`, in bytes.
@@ -46,19 +33,6 @@
  */
 #define EXPANDED_SECRET_KEY_LENGTH (EXPANDED_SECRET_KEY_KEY_LENGTH + EXPANDED_SECRET_KEY_NONCE_LENGTH)
 
-#define BLAKE2B_HASH_SIZE 64
-
-#define BLAKE2B_NUMERIC_ID 0
-
-/**
- * The maximum number of bytes this will use for any variant.
- *
- * This is a bit yuck because it knows the number of bytes varu64 uses to encode the
- * BLAKE2B_HASH_SIZE and the BLAKE2B_NUMERIC_ID (2).
- * This is unlikely to cause a problem until there are hundreds of variants.
- */
-#define MAX_YAMF_HASH_SIZE (BLAKE2B_HASH_SIZE + 2)
-
 typedef enum DecodeError {
   DecodeError_NoError,
   DecodeError_PayloadHashError,
@@ -75,7 +49,7 @@ typedef enum DecodeError {
 
 typedef enum PublishError {
   PublishError_NoError,
-  PublishError_PublishWithoutKeypair,
+  PublishError_PublishWithInvalidKeypair,
   PublishError_PublishAfterEndOfFeed,
   PublishError_PublishWithIncorrectLogId,
   PublishError_PublishWithoutSecretKey,
@@ -115,15 +89,15 @@ typedef enum VerifyError {
 typedef struct CEntry {
   uint64_t log_id;
   bool is_end_of_feed;
-  uint8_t payload_hash_bytes[BLAKE2B_HASH_SIZE];
+  uint8_t payload_hash_bytes[HASH_LEN];
   uint64_t payload_length;
   uint8_t author[PUBLIC_KEY_LENGTH];
   uint64_t seq_num;
-  uint8_t backlink[BLAKE2B_HASH_SIZE];
+  uint8_t backlink[HASH_LEN];
   bool has_backlink;
-  uint8_t lipmaa_link[BLAKE2B_HASH_SIZE];
+  uint8_t lipmaa_link[HASH_LEN];
   bool has_lipmaa_link;
-  uint8_t sig[ED25519_SIGNATURE_SIZE];
+  uint8_t sig[SIGNATURE_LENGTH];
 } CEntry;
 
 typedef struct DecodeEd25519Blade2bEntryArgs {
