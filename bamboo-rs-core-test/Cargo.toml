@@ -18,7 +18,7 @@ hex = { version = "0.4", default-features = false }
 varu64 = { version ="0.6.2", default-features = false } 
 lipmaa-link = "0.1.1"
 ed25519-dalek = { version = "1.0.1", default-features = false, features = ["u64_backend", "alloc", "serde"] }
-criterion = "0.3.3"
+criterion = "0.3.5"
 rand = "0.7.0"
 
 [[bench]]
