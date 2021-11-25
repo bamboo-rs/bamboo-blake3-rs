@@ -1,4 +1,4 @@
-use crate::BLAKE2B_HASH_SIZE;
+use yamf_hash::BLAKE3_HASH_SIZE;
 use arrayvec::ArrayVec;
 use core::borrow::Borrow;
 use core::convert::TryFrom;
@@ -19,7 +19,7 @@ use super::Entry;
 use rayon::prelude::*;
 
 #[cfg(feature = "std")]
-use blake2b_simd::blake2b;
+use yamf_hash::blake3;
 
 use super::error::*;
 
@@ -49,11 +49,11 @@ pub fn verify_batch_links_and_payload<E: AsRef<[u8]> + Sync, P: AsRef<[u8]> + Sy
         .par_iter()
         .map(|(bytes, payload)| {
             let entry = Entry::try_from(bytes.as_ref()).context(DecodeEntry)?;
-            let entry_hash = blake2b(bytes.as_ref()); //HashManyJob::new(&params, bytes.as_ref());
+            let entry_hash = blake3(bytes.as_ref()); //HashManyJob::new(&params, bytes.as_ref());
 
             let payload_and_hash = payload
                 .as_ref()
-                .map(|payload| (payload.as_ref(), blake2b(payload.as_ref())));
+                .map(|payload| (payload.as_ref(), blake3(payload.as_ref())));
 
             Ok((
                 entry.seq_num,
@@ -66,13 +66,13 @@ pub fn verify_batch_links_and_payload<E: AsRef<[u8]> + Sync, P: AsRef<[u8]> + Sy
         .par_iter()
         .map(|(seq_num, (_, entry, _, payload_and_hash))| {
             let backlink_and_hash = hash_map.get(&(seq_num - 1)).map(
-                |(bytes, _, entry_hash, _)| -> (_, YamfHash<ArrayVec<[u8; BLAKE2B_HASH_SIZE]>>) {
+                |(bytes, _, entry_hash, _)| -> (_, YamfHash<ArrayVec<[u8; BLAKE3_HASH_SIZE]>>) {
                     (*bytes, (*entry_hash).into())
                 },
             );
 
             let lipmaa_link_and_hash = hash_map.get(&(lipmaa_link::lipmaa(*seq_num))).map(
-                |(bytes, _, entry_hash, _)| -> (_, YamfHash<ArrayVec<[u8; BLAKE2B_HASH_SIZE]>>) {
+                |(bytes, _, entry_hash, _)| -> (_, YamfHash<ArrayVec<[u8; BLAKE3_HASH_SIZE]>>) {
                     (*bytes, (*entry_hash).into())
                 },
             );

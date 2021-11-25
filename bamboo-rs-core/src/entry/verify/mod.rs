@@ -6,7 +6,7 @@ use snafu::{ensure, NoneError, ResultExt};
 use ed25519_dalek::{Signature as DalekSignature, Verifier};
 
 use super::{decode::decode, is_lipmaa_required, Entry};
-use crate::yamf_hash::new_blake2b;
+use crate::yamf_hash::new_blake3;
 use crate::yamf_hash::YamfHash;
 
 #[cfg(feature = "std")]
@@ -43,9 +43,9 @@ where
 
 pub fn verify_links_and_payload(
     entry: &Entry<&[u8], &[u8]>,
-    payload: Option<(&[u8], YamfHash<ArrayVec<[u8; 64]>>)>,
-    lipmaa_link: Option<(&[u8], YamfHash<ArrayVec<[u8; 64]>>)>,
-    backlink: Option<(&[u8], YamfHash<ArrayVec<[u8; 64]>>)>,
+    payload: Option<(&[u8], YamfHash<ArrayVec<[u8; 32]>>)>,
+    lipmaa_link: Option<(&[u8], YamfHash<ArrayVec<[u8; 32]>>)>,
+    backlink: Option<(&[u8], YamfHash<ArrayVec<[u8; 32]>>)>,
 ) -> Result<(), Error> {
     // If we have the payload, check that its hash and length match what is encoded in the
     // entry.
@@ -162,9 +162,9 @@ pub fn verify(
     // Decode the entry that we want to verify.
     let entry = decode(entry_bytes).context(DecodeEntry)?;
 
-    let payload_and_hash = payload.map(|payload| (payload, new_blake2b(payload)));
-    let lipmaa_link_and_hash = lipmaa_link.map(|link| (link, new_blake2b(link)));
-    let backlink_and_hash = backlink.map(|link| (link, new_blake2b(link)));
+    let payload_and_hash = payload.map(|payload| (payload, new_blake3(payload)));
+    let lipmaa_link_and_hash = lipmaa_link.map(|link| (link, new_blake3(link)));
+    let backlink_and_hash = backlink.map(|link| (link, new_blake3(link)));
 
     verify_links_and_payload(
         &entry,

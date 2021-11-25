@@ -20,7 +20,7 @@
 //! require passing the previous seq_num, the previous entry, and lipmaa_link.
 //!
 //! ```
-//! use bamboo_rs_core::{publish, verify, decode, yamf_hash::new_blake2b, Entry, Signature, YamfHash, Keypair, entry::MAX_ENTRY_SIZE};
+//! use bamboo_rs_core::{publish, verify, decode, yamf_hash::new_blake3, Entry, Signature, YamfHash, Keypair, entry::MAX_ENTRY_SIZE};
 //! use rand::rngs::OsRng;
 //!
 //! let mut csprng: OsRng = OsRng {};
@@ -45,7 +45,7 @@
 //! let entry = decode(&out[..size]).unwrap();
 //!
 //! let is_verified = verify(&out[..size], Some(payload.as_bytes()), None, None).is_ok();
-//! let payload_hash = new_blake2b(payload.as_bytes());
+//! let payload_hash = new_blake3(payload.as_bytes());
 //!
 //! assert!(is_verified);
 //! assert_eq!(entry.log_id, log_id);

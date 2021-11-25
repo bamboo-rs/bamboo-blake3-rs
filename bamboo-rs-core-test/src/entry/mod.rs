@@ -6,7 +6,7 @@ mod tests {
     use bamboo_rs_core::entry::verify::Error as VerifyError;
     use bamboo_rs_core::entry::verify_batch;
     use bamboo_rs_core::signature::ED25519_SIGNATURE_SIZE;
-    use bamboo_rs_core::yamf_hash::BLAKE2B_HASH_SIZE;
+    use bamboo_rs_core::yamf_hash::BLAKE3_HASH_SIZE;
     use bamboo_rs_core::{publish, verify, Entry, Signature, YamfHash};
     use ed25519_dalek::{Keypair, PublicKey};
     use rand::rngs::OsRng;
@@ -15,10 +15,10 @@ mod tests {
 
     #[test]
     fn encode_write_decode_entry() {
-        let backlink_bytes = [0xAA; BLAKE2B_HASH_SIZE];
-        let backlink = YamfHash::<&[u8]>::Blake2b(backlink_bytes[..].into());
-        let payload_hash_bytes = [0xAB; BLAKE2B_HASH_SIZE];
-        let payload_hash = YamfHash::<&[u8]>::Blake2b(payload_hash_bytes[..].into());
+        let backlink_bytes = [0xAA; BLAKE3_HASH_SIZE];
+        let backlink = YamfHash::<&[u8]>::Blake3(backlink_bytes[..].into());
+        let payload_hash_bytes = [0xAB; BLAKE3_HASH_SIZE];
+        let payload_hash = YamfHash::<&[u8]>::Blake3(payload_hash_bytes[..].into());
         let payload_size = 512;
         let seq_num = 2;
         let log_id = 333;
@@ -42,13 +42,14 @@ mod tests {
         let entry = decode(&entry_vec).unwrap();
 
         match entry.payload_hash {
-            YamfHash::Blake2b(ref hash) => {
+            YamfHash::Blake3(ref hash) => {
                 assert_eq!(hash.as_ref(), &payload_hash_bytes[..]);
             }
+            _ => panic!(),
         }
 
         match entry.backlink {
-            Some(YamfHash::Blake2b(ref hash)) => {
+            Some(YamfHash::Blake3(ref hash)) => {
                 assert_eq!(hash.as_ref(), &backlink_bytes[..]);
             }
             _ => panic!(),
