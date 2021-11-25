@@ -117,13 +117,12 @@ where
             let mut vec = ArrayVec::<[u8; 64]>::new();
             vec.try_extend_from_slice(&s.borrow()[..]).unwrap();
             YamfHash::Blake2b(vec)
-        },
+        }
         YamfHash::Blake3(ref s) => {
             let mut vec = ArrayVec::<[u8; 64]>::new();
             vec.try_extend_from_slice(&s.borrow()[..]).unwrap();
             YamfHash::Blake3(vec)
         }
-
     };
 
     let backlink = match entry.backlink {
@@ -131,7 +130,7 @@ where
             let mut vec = ArrayVec::<[u8; 64]>::new();
             vec.try_extend_from_slice(&s.borrow()[..]).unwrap();
             Some(YamfHash::Blake2b(vec))
-        },
+        }
         Some(YamfHash::Blake3(ref s)) => {
             let mut vec = ArrayVec::<[u8; 64]>::new();
             vec.try_extend_from_slice(&s.borrow()[..]).unwrap();
@@ -146,7 +145,7 @@ where
             let mut vec = ArrayVec::<[u8; 64]>::new();
             vec.try_extend_from_slice(&s.borrow()[..]).unwrap();
             Some(YamfHash::Blake2b(vec))
-        },
+        }
         Some(YamfHash::Blake3(ref s)) => {
             let mut vec = ArrayVec::<[u8; 64]>::new();
             vec.try_extend_from_slice(&s.borrow()[..]).unwrap();

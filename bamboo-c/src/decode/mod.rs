@@ -56,7 +56,7 @@ pub extern "C" fn decode_ed25519_blake2b_entry(
             entry.lipmaa_link.map(|lipmaa_link| match lipmaa_link {
                 YamfHash::Blake2b(_) => {
                     panic!("can't decode blake2 yamfhashes");
-                },
+                }
                 YamfHash::Blake3(bytes) => {
                     args.out_decoded_entry.lipmaa_link[..].copy_from_slice(&bytes[..]);
                 }
@@ -69,7 +69,6 @@ pub extern "C" fn decode_ed25519_blake2b_entry(
                 YamfHash::Blake3(bytes) => {
                     args.out_decoded_entry.backlink[..].copy_from_slice(&bytes[..]);
                 }
-
             });
 
             match entry.payload_hash {

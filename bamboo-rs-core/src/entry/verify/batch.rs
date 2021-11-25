@@ -1,4 +1,3 @@
-use yamf_hash::BLAKE3_HASH_SIZE;
 use arrayvec::ArrayVec;
 use core::borrow::Borrow;
 use core::convert::TryFrom;
@@ -6,6 +5,7 @@ use ed25519_dalek::PublicKey;
 use snafu::{NoneError, ResultExt};
 #[cfg(feature = "std")]
 use std::collections::HashMap;
+use yamf_hash::BLAKE3_HASH_SIZE;
 
 use ed25519_dalek::Signature as DalekSignature;
 
