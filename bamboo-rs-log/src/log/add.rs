@@ -1,8 +1,8 @@
 use core::fmt::Debug;
 use super::Log;
 use crate::entry_store::EntryStore;
-use bamboo_rs_core::entry::decode;
-use bamboo_rs_core::entry::verify;
+use bamboo_blake3_rs_core::entry::decode;
+use bamboo_blake3_rs_core::entry::verify;
 use lipmaa_link::lipmaa;
 use snafu::ResultExt;
 
@@ -52,11 +52,11 @@ mod tests {
     use crate::entry_store::MemoryEntryStore;
     use crate::{EntryStore, Log};
     use arrayvec::ArrayVec;
-    use bamboo_rs_core::signature::{Signature, ED25519_SIGNATURE_SIZE};
-    use bamboo_rs_core::yamf_hash::{new_blake2b, YamfHash};
-    use bamboo_rs_core::yamf_signatory::YamfSignatory;
-    use bamboo_rs_core::Error;
-    use bamboo_rs_core::{Entry, Keypair};
+    use bamboo_blake3_rs_core::signature::{Signature, ED25519_SIGNATURE_SIZE};
+    use bamboo_blake3_rs_core::yamf_hash::{new_blake2b, YamfHash};
+    use bamboo_blake3_rs_core::yamf_signatory::YamfSignatory;
+    use bamboo_blake3_rs_core::Error;
+    use bamboo_blake3_rs_core::{Entry, Keypair};
     use rand::rngs::OsRng;
     use std::convert::TryInto;
 

@@ -3,12 +3,12 @@ pub mod utils;
 pub use utils::set_panic_hook;
 
 use arrayvec::*;
-use bamboo_rs_core::entry::{
+use bamboo_blake3_rs_core::entry::{
     decode as decode_entry, into_owned, publish as publish_entry, verify as verify_entry,
     MAX_ENTRY_SIZE,
 };
-use bamboo_rs_core::{hash, lipmaa, Entry, Hash};
-use bamboo_rs_core::{Keypair, PublicKey, SecretKey, Signature};
+use bamboo_blake3_rs_core::{hash, lipmaa, Entry, Hash};
+use bamboo_blake3_rs_core::{Keypair, PublicKey, SecretKey, Signature};
 use rand::rngs::OsRng;
 use wasm_bindgen::prelude::*;
 
@@ -140,8 +140,8 @@ pub fn publish(
     lipmaa_entry_vec: Option<Vec<u8>>,
     backlink_vec: Option<Vec<u8>>,
 ) -> Result<Vec<u8>, JsValue> {
-    let mut out = Vec::with_capacity(bamboo_rs_core::entry::MAX_ENTRY_SIZE);
-    out.resize(bamboo_rs_core::entry::MAX_ENTRY_SIZE, 0);
+    let mut out = Vec::with_capacity(MAX_ENTRY_SIZE);
+    out.resize(MAX_ENTRY_SIZE, 0);
 
     let public_key =
         PublicKey::from_bytes(public_key).map_err(|e| JsValue::from_str(&e.to_string()))?;

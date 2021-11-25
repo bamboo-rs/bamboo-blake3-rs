@@ -1,4 +1,4 @@
-use bamboo_rs_core::entry::decode::Error as BambooDecodeError;
+use bamboo_blake3_rs_core::entry::decode::Error as BambooDecodeError;
 
 #[repr(C)]
 /// cbindgen:prefix-with-name=true

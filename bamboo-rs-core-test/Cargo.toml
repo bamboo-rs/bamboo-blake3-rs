@@ -5,10 +5,10 @@ authors = ["Piet Geursen <pietgeursen@gmail.com>"]
 edition = "2018"
 
 [dependencies]
-bamboo-rs-core = {path = "../bamboo-rs-core"}
+bamboo-blake3-rs-core = {path = "../bamboo-rs-core"}
 
 [dev-dependencies]
-bamboo-rs-core = {path = "../bamboo-rs-core"}
+bamboo-blake3-rs-core = {path = "../bamboo-rs-core"}
 bamboo-rs-log = {path = "../bamboo-rs-log"}
 arrayvec = { version = "0.5.1", default-features = false}
 serde = { version = "1.0.94", default-features = false , features = ["derive"] }

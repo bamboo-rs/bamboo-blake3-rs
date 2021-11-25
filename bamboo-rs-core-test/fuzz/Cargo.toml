@@ -9,7 +9,7 @@ cargo-fuzz = true
 
 [dependencies]
 
-[dependencies.bamboo-rs-core]
+[dependencies.bamboo-blake3-rs-core]
 path = "../../bamboo-rs-core"
 
 [dependencies.libfuzzer-sys]

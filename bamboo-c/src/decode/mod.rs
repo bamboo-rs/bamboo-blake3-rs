@@ -1,6 +1,6 @@
-use bamboo_rs_core::entry::decode;
-use bamboo_rs_core::signature::ED25519_SIGNATURE_SIZE;
-use bamboo_rs_core::HASH_LEN;
+use bamboo_blake3_rs_core::entry::decode;
+use bamboo_blake3_rs_core::signature::ED25519_SIGNATURE_SIZE;
+use bamboo_blake3_rs_core::HASH_LEN;
 use core::slice;
 use ed25519_dalek::PUBLIC_KEY_LENGTH;
 

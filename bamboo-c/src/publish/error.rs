@@ -1,4 +1,4 @@
-use bamboo_rs_core::entry::publish::Error as BambooPublishError;
+use bamboo_blake3_rs_core::entry::publish::Error as BambooPublishError;
 
 #[repr(C)]
 /// cbindgen:prefix-with-name=true

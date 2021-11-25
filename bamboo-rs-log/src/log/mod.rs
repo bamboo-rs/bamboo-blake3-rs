@@ -1,5 +1,5 @@
 pub use crate::entry_store::EntryStore;
-use bamboo_rs_core::{Keypair, PublicKey};
+use bamboo_blake3_rs_core::{Keypair, PublicKey};
 
 pub mod add;
 pub mod publish;

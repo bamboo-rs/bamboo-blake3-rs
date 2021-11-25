@@ -1,4 +1,4 @@
-use bamboo_rs_core::entry::verify;
+use bamboo_blake3_rs_core::entry::verify;
 use core::slice;
 
 mod error;

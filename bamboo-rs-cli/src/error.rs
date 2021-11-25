@@ -51,11 +51,11 @@ pub enum Error {
     ParseLogId { source: std::num::ParseIntError },
     #[snafu(display("Could not decode entry: {:?}", error))]
     DecodeEntry {
-        error: bamboo_rs_core::entry::decode::Error,
+        error: bamboo_blake3_rs_core::entry::decode::Error,
     },
     #[snafu(display("Could not decode previous entry: {:?}", error))]
     DecodePreviousEntry {
-        error: bamboo_rs_core::entry::decode::Error,
+        error: bamboo_blake3_rs_core::entry::decode::Error,
     },
 }
 

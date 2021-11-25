@@ -20,7 +20,7 @@
 //! require passing the previous seq_num, the previous entry, and lipmaa_link.
 //!
 //! ```
-//! use bamboo_rs_core::{publish, verify, decode, hash, Entry, Signature, Keypair, entry::MAX_ENTRY_SIZE};
+//! use bamboo_blake3_rs_core::{publish, verify, decode, hash, Entry, Signature, Keypair, entry::MAX_ENTRY_SIZE};
 //! use rand::rngs::OsRng;
 //!
 //! let mut csprng: OsRng = OsRng {};

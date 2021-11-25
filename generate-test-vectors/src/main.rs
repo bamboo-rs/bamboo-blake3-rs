@@ -2,12 +2,12 @@ extern crate serde_json;
 #[macro_use]
 extern crate serde;
 
-extern crate bamboo_rs_core;
+extern crate bamboo_blake3_rs_core;
 extern crate bamboo_rs_log;
 extern crate hex;
 
-use bamboo_rs_core::entry::decode;
-use bamboo_rs_core::lipmaa;
+use bamboo_blake3_rs_core::entry::decode;
+use bamboo_blake3_rs_core::lipmaa;
 use bamboo_rs_log::entry_store::MemoryEntryStore;
 use bamboo_rs_log::{EntryStore, Log};
 use ed25519_dalek::Keypair;
