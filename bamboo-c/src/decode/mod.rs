@@ -49,11 +49,18 @@ pub extern "C" fn decode_ed25519_blake2b_entry(
             args.out_decoded_entry.has_backlink = entry.backlink.is_some();
             args.out_decoded_entry.has_lipmaa_link = entry.lipmaa_link.is_some();
 
-            if let Some(sig) = entry.sig { args.out_decoded_entry.sig[..].copy_from_slice(sig.0); }
+            if let Some(sig) = entry.sig {
+                args.out_decoded_entry.sig[..].copy_from_slice(sig.0);
+            }
 
-            if let Some(lipmaa_link) = entry.lipmaa_link { args.out_decoded_entry.lipmaa_link[..].copy_from_slice(lipmaa_link.as_bytes()) }
-            if let Some(backlink) = entry.backlink { args.out_decoded_entry.backlink[..].copy_from_slice(backlink.as_bytes()) }
-            args.out_decoded_entry.payload_hash_bytes[..].copy_from_slice(entry.payload_hash.as_bytes());
+            if let Some(lipmaa_link) = entry.lipmaa_link {
+                args.out_decoded_entry.lipmaa_link[..].copy_from_slice(lipmaa_link.as_bytes())
+            }
+            if let Some(backlink) = entry.backlink {
+                args.out_decoded_entry.backlink[..].copy_from_slice(backlink.as_bytes())
+            }
+            args.out_decoded_entry.payload_hash_bytes[..]
+                .copy_from_slice(entry.payload_hash.as_bytes());
 
             args.out_decoded_entry.author[..].copy_from_slice(&entry.author.as_bytes()[..]);
 

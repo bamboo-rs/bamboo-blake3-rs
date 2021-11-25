@@ -70,12 +70,18 @@ where
     pub seq_num: u64,
     #[cfg_attr(
         feature = "std",
-        serde(serialize_with = "hex_opt_from_hash", deserialize_with = "hash_opt_from_hex")
+        serde(
+            serialize_with = "hex_opt_from_hash",
+            deserialize_with = "hash_opt_from_hex"
+        )
     )]
     pub backlink: Option<Hash>,
     #[cfg_attr(
         feature = "std",
-        serde(serialize_with = "hex_opt_from_hash", deserialize_with = "hash_opt_from_hex")
+        serde(
+            serialize_with = "hex_opt_from_hash",
+            deserialize_with = "hash_opt_from_hex"
+        )
     )]
     pub lipmaa_link: Option<Hash>,
     #[cfg_attr(feature = "std", serde(bound(deserialize = "S: From<Vec<u8>>")))]

@@ -1,8 +1,8 @@
+use blake3::Hash;
 use core::borrow::Borrow;
 use ed25519_dalek::PublicKey as DalekPublicKey;
 use serde::de::Error;
 use serde::{Deserialize, Deserializer, Serializer};
-use blake3::Hash;
 
 #[cfg(feature = "std")]
 pub fn serialize_pub_key<S>(public_key: &DalekPublicKey, serializer: S) -> Result<S::Ok, S::Error>
@@ -41,8 +41,7 @@ where
     if deserializer.is_human_readable() {
         let s: Option<&str> = Deserialize::deserialize(deserializer)?;
 
-        let hash = s
-            .map(|s: &str| Hash::from_hex(s).unwrap());
+        let hash = s.map(|s: &str| Hash::from_hex(s).unwrap());
         Ok(hash)
     } else {
         let bytes: Option<[u8; 32]> = Deserialize::deserialize(deserializer)?;
@@ -81,15 +80,13 @@ where
 {
     if serializer.is_human_readable() {
         match hash {
-            Some(hash) =>serializer.serialize_some(hash.to_hex().as_str()),
-            None => serializer.serialize_none()
-
+            Some(hash) => serializer.serialize_some(hash.to_hex().as_str()),
+            None => serializer.serialize_none(),
         }
     } else {
         match hash {
-            Some(hash) =>serializer.serialize_some(hash.as_bytes()),
-            None => serializer.serialize_none()
-
+            Some(hash) => serializer.serialize_some(hash.as_bytes()),
+            None => serializer.serialize_none(),
         }
     }
 }

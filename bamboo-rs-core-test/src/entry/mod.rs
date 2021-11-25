@@ -6,8 +6,8 @@ mod tests {
     use bamboo_blake3_rs_core::entry::verify::Error as VerifyError;
     use bamboo_blake3_rs_core::entry::verify_batch;
     use bamboo_blake3_rs_core::signature::ED25519_SIGNATURE_SIZE;
-    use bamboo_blake3_rs_core::{HASH_LEN, Hash};
     use bamboo_blake3_rs_core::{publish, verify, Entry, Signature};
+    use bamboo_blake3_rs_core::{Hash, HASH_LEN};
     use ed25519_dalek::{Keypair, PublicKey};
     use rand::rngs::OsRng;
     use std::io::Write;

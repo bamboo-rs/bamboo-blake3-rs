@@ -105,10 +105,7 @@ pub fn decode(buffer: &[u8]) -> Result<BambooEntry, JsValue> {
     let entry = decode_entry(buffer).map_err(|err| JsValue::from_str(&err.to_string()))?;
 
     let entry = into_owned(&entry);
-    let bamboo_entry = BambooEntry {
-        hash,
-        value: entry,
-    };
+    let bamboo_entry = BambooEntry { hash, value: entry };
 
     Ok(bamboo_entry)
 }
@@ -196,7 +193,7 @@ impl KeyPair {
     }
 }
 
-impl Default for KeyPair{
+impl Default for KeyPair {
     fn default() -> Self {
         Self::new()
     }

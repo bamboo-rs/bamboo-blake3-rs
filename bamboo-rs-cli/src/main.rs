@@ -1,5 +1,5 @@
 use bamboo_blake3_rs_core::entry::MAX_ENTRY_SIZE;
-use bamboo_blake3_rs_core::{decode, lipmaa, publish, verify, Keypair, hash};
+use bamboo_blake3_rs_core::{decode, hash, lipmaa, publish, verify, Keypair};
 use rand::rngs::OsRng;
 use snafu::ResultExt;
 use std::fs::File;

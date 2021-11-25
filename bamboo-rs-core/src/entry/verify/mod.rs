@@ -5,7 +5,7 @@ use snafu::{ensure, NoneError, ResultExt};
 use ed25519_dalek::{Signature as DalekSignature, Verifier};
 
 use super::{decode::decode, is_lipmaa_required, Entry};
-use blake3::{Hash, hash};
+use blake3::{hash, Hash};
 
 #[cfg(feature = "std")]
 pub mod batch;

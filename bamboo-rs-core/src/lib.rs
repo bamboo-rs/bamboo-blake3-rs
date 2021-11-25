@@ -69,9 +69,9 @@ mod util;
 
 pub use ed25519_dalek::{Keypair, PublicKey, SecretKey, SignatureError};
 
+pub use blake3::{hash, Hash, OUT_LEN as HASH_LEN};
 #[cfg(feature = "std")]
 pub use entry::verify::verify_batch;
 pub use entry::{decode, publish, verify, Entry};
 pub use lipmaa_link::lipmaa;
 pub use signature::{Signature, ED25519_SIGNATURE_SIZE};
-pub use blake3::{OUT_LEN as HASH_LEN, hash, Hash};

@@ -90,8 +90,7 @@ pub fn publish(
         // If the lipmaalink and backlink would be different, we should append the lipmaalink,
         // otherwise we're allowed to omit it to save some bytes.
         if is_lipmaa_required(seq_num) {
-            let lipmaa_link =
-                hash(lipmaa_entry_bytes.ok_or(Error::PublishWithoutLipmaaEntry)?);
+            let lipmaa_link = hash(lipmaa_entry_bytes.ok_or(Error::PublishWithoutLipmaaEntry)?);
             entry.lipmaa_link = Some(lipmaa_link);
         }
     }

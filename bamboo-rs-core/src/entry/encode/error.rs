@@ -7,7 +7,7 @@ pub enum Error {
     #[snafu(display("`out` buffer to encode into was length 0"))]
     EncodeBufferLength,
     #[snafu(display("Encode lipmaa link to bytes failed"))]
-    EncodeLipmaaError ,
+    EncodeLipmaaError,
     #[snafu(display("Encode back link to bytes failed"))]
     EncodeBacklinkError,
     #[snafu(display(

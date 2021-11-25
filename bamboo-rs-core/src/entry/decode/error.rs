@@ -1,6 +1,6 @@
 use crate::signature::error::Error as SigError;
-use snafu::Snafu;
 use core::array::TryFromSliceError;
+use snafu::Snafu;
 
 #[derive(Debug, Snafu)]
 #[snafu(visibility = "pub(super)")]
