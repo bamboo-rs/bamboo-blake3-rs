@@ -3,7 +3,7 @@
 > Rust implementation of [bamboo-blake3](https://github.com/bamboo-rs/bamboo-blake3).
 
 ## Docs
-[Rust docs](https://pietgeursen.github.io/bamboo-rs/bamboo_rs_core/index.html)
+[Rust docs](https://bamboo-rs.github.io/bamboo-blake3-rs/bamboo_blake3_rs_core/index.html)
 
 ## About
 
