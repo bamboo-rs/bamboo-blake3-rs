@@ -4,11 +4,10 @@ use ed25519_dalek::{PublicKey as DalekPublicKey, PUBLIC_KEY_LENGTH};
 
 use crate::signature::Signature;
 use blake3::{Hash, OUT_LEN as HASH_LEN};
-use core::array::TryFromSliceError;
 use core::convert::TryInto;
 
 use super::{is_lipmaa_required, Entry};
-use snafu::{ensure, NoneError, ResultExt};
+use snafu::{ensure, NoneError, ResultExt, Snafu};
 
 pub mod error;
 pub use error::*;
@@ -87,8 +86,15 @@ pub fn decode(bytes: &[u8]) -> Result<Entry<&[u8]>, Error> {
     })
 }
 
-fn decode_blake3_hash(slice: &[u8]) -> Result<(Hash, &[u8]), TryFromSliceError> {
-    let array: [u8; HASH_LEN] = slice[..HASH_LEN].try_into()?;
+#[derive(Debug, Snafu)]
+pub enum DecodeBlakeHashError {
+    #[snafu(display("Decoding from slice failed"))]
+    DecodeFromSlice,
+}
+fn decode_blake3_hash(slice: &[u8]) -> Result<(Hash, &[u8]), DecodeBlakeHashError> {
+    let array: [u8; HASH_LEN] = slice[..HASH_LEN]
+        .try_into()
+        .map_err(|_| DecodeBlakeHashError::DecodeFromSlice)?;
     let hash = Hash::from(array);
     let remaining_bytes = &slice[HASH_LEN..];
 
