@@ -54,10 +54,10 @@ pub fn publish(
 
     // if the seq is larger than 1, we need to append the lipmaa and backlink hashes.
     if seq_num > 1 {
-        let backlink_entry = decode(&backlink_bytes.ok_or(Error::PublishWithoutBacklinkEntry)?[..])
+        let backlink_entry = decode(backlink_bytes.ok_or(Error::PublishWithoutBacklinkEntry)?)
             .context(DecodeBacklinkEntry)?;
 
-        let lipmaa_entry = decode(&lipmaa_entry_bytes.ok_or(Error::PublishWithoutLipmaaEntry)?[..])
+        let lipmaa_entry = decode(lipmaa_entry_bytes.ok_or(Error::PublishWithoutLipmaaEntry)?)
             .context(DecodeLipmaaEntry)?;
         // Ensure we're not trying to publish after the end of a feed.
         ensure!(!backlink_entry.is_end_of_feed, PublishAfterEndOfFeed);
@@ -104,7 +104,7 @@ pub fn publish(
 
     let signature = key_pair.sign(&out[..buff_size]);
     let sig_bytes = &signature.to_bytes()[..];
-    let signature = Signature(sig_bytes.into());
+    let signature = Signature(sig_bytes);
 
     entry.sig = Some(signature);
 

@@ -39,7 +39,7 @@ pub extern "C" fn decode_ed25519_blake2b_entry(
 ) -> DecodeError {
     let entry_slice = unsafe { slice::from_raw_parts(args.entry_bytes, args.entry_length) };
 
-    decode(&entry_slice)
+    decode(entry_slice)
         .map_err(|err| err.into())
         .and_then::<(), _>(|entry| {
             args.out_decoded_entry.log_id = entry.log_id;
@@ -49,16 +49,14 @@ pub extern "C" fn decode_ed25519_blake2b_entry(
             args.out_decoded_entry.has_backlink = entry.backlink.is_some();
             args.out_decoded_entry.has_lipmaa_link = entry.lipmaa_link.is_some();
 
-            entry.sig.map(|sig| {
-                args.out_decoded_entry.sig[..].copy_from_slice(&sig.0[..]);
-            });
+            if let Some(sig) = entry.sig { args.out_decoded_entry.sig[..].copy_from_slice(sig.0); }
 
             entry.lipmaa_link.map(|lipmaa_link| match lipmaa_link {
                 YamfHash::Blake2b(_) => {
                     panic!("can't decode blake2 yamfhashes");
                 }
                 YamfHash::Blake3(bytes) => {
-                    args.out_decoded_entry.lipmaa_link[..].copy_from_slice(&bytes[..]);
+                    args.out_decoded_entry.lipmaa_link[..].copy_from_slice(bytes);
                 }
             });
 
@@ -67,7 +65,7 @@ pub extern "C" fn decode_ed25519_blake2b_entry(
                     panic!("can't decode blake2 yamfhashes");
                 }
                 YamfHash::Blake3(bytes) => {
-                    args.out_decoded_entry.backlink[..].copy_from_slice(&bytes[..]);
+                    args.out_decoded_entry.backlink[..].copy_from_slice(bytes);
                 }
             });
 
@@ -76,7 +74,7 @@ pub extern "C" fn decode_ed25519_blake2b_entry(
                     panic!("can't decode blake2 yamfhashes");
                 }
                 YamfHash::Blake3(bytes) => {
-                    args.out_decoded_entry.payload_hash_bytes[..].copy_from_slice(&bytes[..]);
+                    args.out_decoded_entry.payload_hash_bytes[..].copy_from_slice(bytes);
                 }
             };
 

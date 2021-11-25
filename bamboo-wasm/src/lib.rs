@@ -113,7 +113,7 @@ pub fn decode(buffer: &[u8]) -> Result<BambooEntry, JsValue> {
 
     let entry = into_owned(&entry);
     let bamboo_entry = BambooEntry {
-        hash: hash,
+        hash,
         value: entry,
     };
 
@@ -157,7 +157,7 @@ pub fn publish(
         SecretKey::from_bytes(secret_key).map_err(|e| JsValue::from_str(&e.to_string()))?;
 
     let key_pair = Keypair {
-        public: public_key.clone(),
+        public: public_key,
         secret: secret_key,
     };
 
@@ -168,8 +168,8 @@ pub fn publish(
         payload,
         is_end_of_feed,
         last_seq_num,
-        lipmaa_entry_vec.as_ref().map(|vec| vec.as_slice()),
-        backlink_vec.as_ref().map(|vec| vec.as_slice()),
+        lipmaa_entry_vec.as_deref(),
+        backlink_vec.as_deref(),
     )
     .map_err(|err| JsValue::from_str(&err.to_string()))
     .map(|entry_size| {

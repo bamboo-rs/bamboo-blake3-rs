@@ -56,7 +56,7 @@ fn main() -> Result<()> {
                 let previous_entry = decode(&previous_bytes)
                     .map_err(|err| Error::DecodePreviousEntry { error: err })?;
 
-                let seq_num = previous_entry.seq_num.clone();
+                let seq_num = previous_entry.seq_num;
 
                 (Some(previous_bytes), Some(lipmaa_bytes), Some(seq_num))
             };

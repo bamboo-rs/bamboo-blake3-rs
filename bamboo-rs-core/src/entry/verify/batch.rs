@@ -105,7 +105,7 @@ where
             || (),
             |_, chunk| {
                 let entries = chunk
-                    .into_iter()
+                    .iter()
                     .map(|bytes| Entry::try_from(bytes.as_ref()).context(DecodeEntry))
                     .collect::<Result<Vec<_>>>()?;
 
@@ -139,7 +139,7 @@ where
 
                 let pub_keys = entries
                     .iter()
-                    .map(|entry| entry.author.clone())
+                    .map(|entry| entry.author)
                     .collect::<Vec<PublicKey>>();
 
                 verify_batch_dalek(&unsigned_encodings, &signatures, &pub_keys[..])

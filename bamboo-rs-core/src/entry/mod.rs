@@ -106,7 +106,7 @@ where
     let sig = match entry.sig {
         Some(Signature(ref s)) => {
             let mut vec = ArrayVec::<[u8; 64]>::new();
-            vec.try_extend_from_slice(&s.borrow()[..]).unwrap();
+            vec.try_extend_from_slice(s.borrow()).unwrap();
             Some(Signature(vec))
         }
         None => None,
@@ -115,12 +115,12 @@ where
     let payload_hash = match entry.payload_hash {
         YamfHash::Blake2b(ref s) => {
             let mut vec = ArrayVec::<[u8; 64]>::new();
-            vec.try_extend_from_slice(&s.borrow()[..]).unwrap();
+            vec.try_extend_from_slice(s.borrow()).unwrap();
             YamfHash::Blake2b(vec)
         }
         YamfHash::Blake3(ref s) => {
             let mut vec = ArrayVec::<[u8; 64]>::new();
-            vec.try_extend_from_slice(&s.borrow()[..]).unwrap();
+            vec.try_extend_from_slice(s.borrow()).unwrap();
             YamfHash::Blake3(vec)
         }
     };
@@ -128,12 +128,12 @@ where
     let backlink = match entry.backlink {
         Some(YamfHash::Blake2b(ref s)) => {
             let mut vec = ArrayVec::<[u8; 64]>::new();
-            vec.try_extend_from_slice(&s.borrow()[..]).unwrap();
+            vec.try_extend_from_slice(s.borrow()).unwrap();
             Some(YamfHash::Blake2b(vec))
         }
         Some(YamfHash::Blake3(ref s)) => {
             let mut vec = ArrayVec::<[u8; 64]>::new();
-            vec.try_extend_from_slice(&s.borrow()[..]).unwrap();
+            vec.try_extend_from_slice(s.borrow()).unwrap();
             Some(YamfHash::Blake3(vec))
         }
 
@@ -143,12 +143,12 @@ where
     let lipmaa_link = match entry.lipmaa_link {
         Some(YamfHash::Blake2b(ref s)) => {
             let mut vec = ArrayVec::<[u8; 64]>::new();
-            vec.try_extend_from_slice(&s.borrow()[..]).unwrap();
+            vec.try_extend_from_slice(s.borrow()).unwrap();
             Some(YamfHash::Blake2b(vec))
         }
         Some(YamfHash::Blake3(ref s)) => {
             let mut vec = ArrayVec::<[u8; 64]>::new();
-            vec.try_extend_from_slice(&s.borrow()[..]).unwrap();
+            vec.try_extend_from_slice(s.borrow()).unwrap();
             Some(YamfHash::Blake3(vec))
         }
         None => None,

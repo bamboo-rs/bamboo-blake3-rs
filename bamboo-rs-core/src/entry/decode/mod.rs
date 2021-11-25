@@ -15,12 +15,12 @@ pub use error::*;
 ///
 /// Returned [Entry] references `bytes`.
 pub fn decode<'a>(bytes: &'a [u8]) -> Result<Entry<&'a [u8], &'a [u8]>, Error> {
-    ensure!(bytes.len() > 0, DecodeInputIsLengthZero);
+    ensure!(!bytes.is_empty(), DecodeInputIsLengthZero);
 
     // Decode is end of feed
     let is_end_of_feed = bytes[0] == 1;
 
-    ensure!(bytes.len() >= PUBLIC_KEY_LENGTH + 1, DecodeAuthorError);
+    ensure!(bytes.len() > PUBLIC_KEY_LENGTH, DecodeAuthorError);
 
     // Decode the author
     let author = DalekPublicKey::from_bytes(&bytes[1..PUBLIC_KEY_LENGTH + 1])
