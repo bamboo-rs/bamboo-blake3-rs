@@ -165,7 +165,8 @@ where
 }
 
 fn encode_hash(buff: &mut [u8], hash: &Hash) -> Option<usize> {
-    buff.get_mut(..HASH_LEN)
-        .map(|slic| slic.clone_from_slice(hash.as_bytes()))
-        .map(|_| HASH_LEN)
+    buff.get_mut(..HASH_LEN).map(|slic| {
+        slic.clone_from_slice(hash.as_bytes());
+        HASH_LEN
+    })
 }
