@@ -47,7 +47,7 @@ where
         Ok(B::from(bytes.to_owned()))
     }
 }
-pub fn hex_from_bytes<'de, S, B>(bytes: &B, serializer: S) -> Result<S::Ok, S::Error>
+pub fn hex_from_bytes<S, B>(bytes: &B, serializer: S) -> Result<S::Ok, S::Error>
 where
     S: Serializer,
     B: Borrow<[u8]>,

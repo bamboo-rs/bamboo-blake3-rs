@@ -15,7 +15,7 @@ use serde::Serializer;
 use serde_json::json;
 use serde_json::Value;
 
-pub fn hex_from_bytes<'de, S>(bytes: &[u8], serializer: S) -> Result<S::Ok, S::Error>
+pub fn hex_from_bytes<S>(bytes: &[u8], serializer: S) -> Result<S::Ok, S::Error>
 where
     S: Serializer,
 {
@@ -56,12 +56,7 @@ fn valid_first_entry() -> Value {
     let secret_byte_string = hex::encode(&keypair.secret);
     let public_byte_string = hex::encode(&keypair.public);
 
-    let mut log = Log::new(
-        MemoryEntryStore::new(),
-        keypair.public,
-        Some(keypair),
-        0,
-    );
+    let mut log = Log::new(MemoryEntryStore::new(), keypair.public, Some(keypair), 0);
     let payload = "hello bamboo!";
     log.publish(payload.as_bytes(), false).unwrap();
 
@@ -91,12 +86,7 @@ fn n_valid_entries(n: u64) -> Value {
         .key_pair;
     let secret_byte_string = hex::encode(&keypair.secret);
     let public_byte_string = hex::encode(&keypair.public);
-    let mut log = Log::new(
-        MemoryEntryStore::new(),
-        keypair.public,
-        Some(keypair),
-        0,
-    );
+    let mut log = Log::new(MemoryEntryStore::new(), keypair.public, Some(keypair), 0);
 
     let vals: Vec<Value> = (1..n)
         .into_iter()

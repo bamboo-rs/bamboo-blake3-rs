@@ -7,7 +7,7 @@ use bamboo_rs_core::entry::{
     decode as decode_entry, into_owned, publish as publish_entry, verify as verify_entry,
     MAX_ENTRY_SIZE,
 };
-use bamboo_rs_core::yamf_hash::new_blake2b;
+use bamboo_rs_core::yamf_hash::new_blake3;
 use bamboo_rs_core::{lipmaa, Entry, YamfHash};
 use bamboo_rs_core::{Keypair, PublicKey, SecretKey, Signature};
 use rand::rngs::OsRng;
@@ -34,7 +34,7 @@ pub fn max_entry_size() -> u32 {
 
 #[wasm_bindgen(inspectable)]
 pub struct BambooEntry {
-    hash: YamfHash<ArrayVec<[u8; 64]>>,
+    hash: YamfHash<ArrayVec<[u8; 32]>>,
     value: Entry<ArrayVec<[u8; 64]>, ArrayVec<[u8; 64]>>,
 }
 
@@ -108,14 +108,11 @@ impl BambooEntry {
 
 #[wasm_bindgen]
 pub fn decode(buffer: &[u8]) -> Result<BambooEntry, JsValue> {
-    let hash = new_blake2b(buffer);
+    let hash = new_blake3(buffer);
     let entry = decode_entry(buffer).map_err(|err| JsValue::from_str(&err.to_string()))?;
 
     let entry = into_owned(&entry);
-    let bamboo_entry = BambooEntry {
-        hash,
-        value: entry,
-    };
+    let bamboo_entry = BambooEntry { hash, value: entry };
 
     Ok(bamboo_entry)
 }
@@ -147,8 +144,7 @@ pub fn publish(
     lipmaa_entry_vec: Option<Vec<u8>>,
     backlink_vec: Option<Vec<u8>>,
 ) -> Result<Vec<u8>, JsValue> {
-    let mut out = Vec::with_capacity(bamboo_rs_core::entry::MAX_ENTRY_SIZE);
-    out.resize(bamboo_rs_core::entry::MAX_ENTRY_SIZE, 0);
+    let mut out = vec![0; MAX_ENTRY_SIZE];
 
     let public_key =
         PublicKey::from_bytes(public_key).map_err(|e| JsValue::from_str(&e.to_string()))?;

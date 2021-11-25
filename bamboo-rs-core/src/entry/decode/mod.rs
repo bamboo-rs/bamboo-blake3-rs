@@ -14,7 +14,7 @@ pub use error::*;
 /// Try and decode `bytes` as an [Entry].
 ///
 /// Returned [Entry] references `bytes`.
-pub fn decode<'a>(bytes: &'a [u8]) -> Result<Entry<&'a [u8], &'a [u8]>, Error> {
+pub fn decode(bytes: &[u8]) -> Result<Entry<&[u8], &[u8]>, Error> {
     ensure!(!bytes.is_empty(), DecodeInputIsLengthZero);
 
     // Decode is end of feed
