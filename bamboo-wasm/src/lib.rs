@@ -140,8 +140,7 @@ pub fn publish(
     lipmaa_entry_vec: Option<Vec<u8>>,
     backlink_vec: Option<Vec<u8>>,
 ) -> Result<Vec<u8>, JsValue> {
-    let mut out = Vec::with_capacity(MAX_ENTRY_SIZE);
-    out.resize(MAX_ENTRY_SIZE, 0);
+    let mut out = vec![0; MAX_ENTRY_SIZE];
 
     let public_key =
         PublicKey::from_bytes(public_key).map_err(|e| JsValue::from_str(&e.to_string()))?;
@@ -194,5 +193,11 @@ impl KeyPair {
         let mut csprng: OsRng = OsRng {};
         let keypair: Keypair = Keypair::generate(&mut csprng);
         KeyPair { inner: keypair }
+    }
+}
+
+impl Default for KeyPair{
+    fn default() -> Self {
+        Self::new()
     }
 }

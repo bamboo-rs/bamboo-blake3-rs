@@ -15,7 +15,7 @@ use serde::Serializer;
 use serde_json::json;
 use serde_json::Value;
 
-pub fn hex_from_bytes<'de, S>(bytes: &[u8], serializer: S) -> Result<S::Ok, S::Error>
+pub fn hex_from_bytes<S>(bytes: &[u8], serializer: S) -> Result<S::Ok, S::Error>
 where
     S: Serializer,
 {

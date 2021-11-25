@@ -16,7 +16,7 @@ pub use error::*;
 /// Try and decode `bytes` as an [Entry].
 ///
 /// Returned [Entry] references `bytes`.
-pub fn decode<'a>(bytes: &'a [u8]) -> Result<Entry<&'a [u8]>, Error> {
+pub fn decode(bytes: &[u8]) -> Result<Entry<&[u8]>, Error> {
     ensure!(!bytes.is_empty(), DecodeInputIsLengthZero);
 
     // Decode is end of feed
@@ -48,13 +48,16 @@ pub fn decode<'a>(bytes: &'a [u8]) -> Result<Entry<&'a [u8]>, Error> {
     let (backlink, lipmaa_link, remaining_bytes) = match (seq_num, lipmaa_is_required) {
         (1, _) => (None, None, remaining_bytes),
         (_, true) => {
-            let (lipmaa_link, remaining_bytes) = decode_blake3_hash(remaining_bytes).context(DecodeLipmaaError)?;
+            let (lipmaa_link, remaining_bytes) =
+                decode_blake3_hash(remaining_bytes).context(DecodeLipmaaError)?;
 
-            let (backlink, remaining_bytes) = decode_blake3_hash(remaining_bytes).context(DecodeBacklinkError)?;
+            let (backlink, remaining_bytes) =
+                decode_blake3_hash(remaining_bytes).context(DecodeBacklinkError)?;
             (Some(backlink), Some(lipmaa_link), remaining_bytes)
         }
         (_, false) => {
-            let (backlink, remaining_bytes) = decode_blake3_hash(remaining_bytes).context(DecodeBacklinkError)?;
+            let (backlink, remaining_bytes) =
+                decode_blake3_hash(remaining_bytes).context(DecodeBacklinkError)?;
             (Some(backlink), None, remaining_bytes)
         }
     };
@@ -84,7 +87,7 @@ pub fn decode<'a>(bytes: &'a [u8]) -> Result<Entry<&'a [u8]>, Error> {
     })
 }
 
-fn decode_blake3_hash<'a>(slice: &'a [u8]) -> Result<(Hash, &'a [u8]), TryFromSliceError> {
+fn decode_blake3_hash(slice: &[u8]) -> Result<(Hash, &[u8]), TryFromSliceError> {
     let array: [u8; HASH_LEN] = slice[..HASH_LEN].try_into()?;
     let hash = Hash::from(array);
     let remaining_bytes = &slice[HASH_LEN..];

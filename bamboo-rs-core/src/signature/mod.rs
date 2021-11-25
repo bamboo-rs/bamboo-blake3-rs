@@ -34,6 +34,11 @@ impl<B: Borrow<[u8]>> Signature<B> {
         self.0.borrow().len()
     }
 
+    /// Is it empty
+    pub fn is_empty(&self) -> bool {
+        self.0.borrow().is_empty()
+    }
+
     // This is bit yuck that the out slice needs to be the right length.
     /// Encodes signature into `out`. `out` must be the same length as the inner slice.
     pub fn encode(&self, out: &mut [u8]) -> Result<usize, Error> {
@@ -55,7 +60,7 @@ impl<B: Borrow<[u8]>> Signature<B> {
         Ok(())
     }
 
-    pub fn decode<'a>(bytes: &'a [u8]) -> Result<(Signature<&'a [u8]>, &'a [u8]), Error> {
+    pub fn decode(bytes: &[u8]) -> Result<(Signature<&[u8]>, &[u8]), Error> {
         match bytes {
             bytes if bytes.len() >= ED25519_SIGNATURE_SIZE as usize => Ok((
                 Signature(bytes[..ED25519_SIGNATURE_SIZE].into()),

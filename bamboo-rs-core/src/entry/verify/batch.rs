@@ -83,7 +83,7 @@ pub fn verify_batch_links_and_payload<E: AsRef<[u8]> + Sync, P: AsRef<[u8]> + Sy
 
 /// Batch verify the signatures of a collection of entries that are **all from the same author and same log_id**
 #[cfg(feature = "std")]
-pub fn verify_batch_signatures<'a, T: AsRef<[u8]>>(entries_bytes: &'a [T]) -> Result<()>
+pub fn verify_batch_signatures<T: AsRef<[u8]>>(entries_bytes: &[T]) -> Result<()>
 where
     [T]: ParallelSlice<T>,
     T: Sync,

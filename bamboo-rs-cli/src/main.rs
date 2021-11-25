@@ -157,7 +157,7 @@ fn main() -> Result<()> {
             pk_file.write_all(&key_pair.public.to_bytes()).unwrap();
         }
         Opts::Lipmaa { sequence } => {
-            let res = u64::from_str_radix(&sequence, 10).context(ParseSequenceNumber)?;
+            let res = sequence.parse::<u64>().context(ParseSequenceNumber)?;
             println!("{}", lipmaa(res))
         }
         Opts::Hash { file } => {

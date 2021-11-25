@@ -56,7 +56,7 @@ pub extern "C" fn publish_ed25519_blake2b_entry(
     //first public and then secret
     let key_pair = Keypair::from_bytes(&key_pair_bytes[..]);
 
-    if let Err(_) = key_pair {
+    if key_pair.is_err() {
         return PublishError::PublishWithInvalidKeypair;
     }
 
