@@ -47,7 +47,7 @@ where
     } else {
         let bytes: Option<[u8; 32]> = Deserialize::deserialize(deserializer)?;
 
-        Ok(bytes.map(|bytes| Hash::from(bytes)))
+        Ok(bytes.map(Hash::from))
     }
 }
 

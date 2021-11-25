@@ -39,7 +39,7 @@ impl<B: Borrow<[u8]>> Signature<B> {
     pub fn encode(&self, out: &mut [u8]) -> Result<usize, Error> {
         ensure!(out.len() >= ED25519_SIGNATURE_SIZE, EncodeError);
 
-        out[..ED25519_SIGNATURE_SIZE].copy_from_slice(&self.0.borrow());
+        out[..ED25519_SIGNATURE_SIZE].copy_from_slice(self.0.borrow());
         Ok(ED25519_SIGNATURE_SIZE)
     }
 
@@ -50,7 +50,7 @@ impl<B: Borrow<[u8]>> Signature<B> {
     /// Encodes signature into a writer.
     #[cfg(feature = "std")]
     pub fn encode_write<W: Write>(&self, mut w: W) -> Result<(), Error> {
-        w.write_all(&self.0.borrow()[..])
+        w.write_all(self.0.borrow())
             .map_err(|_| Error::EncodeWriteError)?;
         Ok(())
     }

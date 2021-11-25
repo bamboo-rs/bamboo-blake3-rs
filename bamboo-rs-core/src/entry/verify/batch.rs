@@ -69,7 +69,7 @@ pub fn verify_batch_links_and_payload<E: AsRef<[u8]> + Sync, P: AsRef<[u8]> + Sy
 
             let payload_and_hash = payload_and_hash
                 .as_ref()
-                .map(|(payload, job)| (*payload, (*job).into()));
+                .map(|(payload, job)| (*payload, (*job)));
 
             verify_links_and_payload(
                 entry,
@@ -95,7 +95,7 @@ where
             || (),
             |_, chunk| {
                 let entries = chunk
-                    .into_iter()
+                    .iter()
                     .map(|bytes| Entry::try_from(bytes.as_ref()).context(DecodeEntry))
                     .collect::<Result<Vec<_>>>()?;
 
@@ -129,7 +129,7 @@ where
 
                 let pub_keys = entries
                     .iter()
-                    .map(|entry| entry.author.clone())
+                    .map(|entry| entry.author)
                     .collect::<Vec<PublicKey>>();
 
                 verify_batch_dalek(&unsigned_encodings, &signatures, &pub_keys[..])

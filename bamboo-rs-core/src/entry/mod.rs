@@ -114,17 +114,17 @@ where
     let sig = match entry.sig {
         Some(Signature(ref s)) => {
             let mut vec = ArrayVec::<[u8; 64]>::new();
-            vec.try_extend_from_slice(&s.borrow()[..]).unwrap();
+            vec.try_extend_from_slice(s.borrow()).unwrap();
             Some(Signature(vec))
         }
         None => None,
     };
 
-    let payload_hash = entry.payload_hash.clone();
+    let payload_hash = entry.payload_hash;
 
-    let backlink = entry.backlink.map(|backlink| backlink.clone());
+    let backlink = entry.backlink;
 
-    let lipmaa_link = entry.lipmaa_link.map(|lipmaa_link| lipmaa_link.clone());
+    let lipmaa_link = entry.lipmaa_link;
 
     Entry {
         is_end_of_feed: entry.is_end_of_feed,

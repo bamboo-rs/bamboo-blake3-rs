@@ -23,7 +23,7 @@ where
         let bytes = hex::encode(bytes);
         serializer.serialize_str(&bytes)
     } else {
-        serializer.serialize_bytes(&bytes)
+        serializer.serialize_bytes(bytes)
     }
 }
 
@@ -58,7 +58,7 @@ fn valid_first_entry() -> Value {
 
     let mut log = Log::new(
         MemoryEntryStore::new(),
-        keypair.public.clone(),
+        keypair.public,
         Some(keypair),
         0,
     );
@@ -93,7 +93,7 @@ fn n_valid_entries(n: u64) -> Value {
     let public_byte_string = hex::encode(&keypair.public);
     let mut log = Log::new(
         MemoryEntryStore::new(),
-        keypair.public.clone(),
+        keypair.public,
         Some(keypair),
         0,
     );
@@ -102,7 +102,7 @@ fn n_valid_entries(n: u64) -> Value {
         .into_iter()
         .map(|i| {
             let payload = format!("message number {}", i);
-            log.publish(&payload.as_bytes(), false).unwrap();
+            log.publish(payload.as_bytes(), false).unwrap();
             let entry_bytes = log.store.get_entry_ref(i).unwrap().unwrap();
             let entry = decode(entry_bytes).unwrap();
             let mut buffer = [0u8; 512];
@@ -130,19 +130,19 @@ fn valid_partially_replicated_feed(n: u64) -> Value {
     let keypair: Keypair = serde_json::from_str::<KeyPairJson>(KEYPAIR_JSON)
         .unwrap()
         .key_pair;
-    let public = keypair.public.clone();
+    let public = keypair.public;
     let secret_byte_string = hex::encode(&keypair.secret);
     let public_byte_string = hex::encode(&keypair.public);
-    let mut log = Log::new(MemoryEntryStore::new(), public.clone(), Some(keypair), 0);
+    let mut log = Log::new(MemoryEntryStore::new(), public, Some(keypair), 0);
 
     (1..n).into_iter().for_each(|i| {
         let payload = format!("message number {}", i);
-        log.publish(&payload.as_bytes(), false).unwrap();
+        log.publish(payload.as_bytes(), false).unwrap();
     });
 
     let lipmaa_seqs = build_lipmaa_set(n - 1, None);
 
-    let mut partial_log = Log::new(MemoryEntryStore::new(), public.clone(), None, 0);
+    let mut partial_log = Log::new(MemoryEntryStore::new(), public, None, 0);
 
     let vals = lipmaa_seqs
         .iter()
@@ -177,7 +177,7 @@ fn build_lipmaa_set(n: u64, mut vec: Option<Vec<u64>>) -> Vec<u64> {
         return vec.unwrap();
     }
 
-    if let None = vec {
+    if vec.is_none() {
         vec = Some(Vec::new());
     }
 

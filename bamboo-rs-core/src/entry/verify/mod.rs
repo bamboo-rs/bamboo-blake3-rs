@@ -69,9 +69,9 @@ pub fn verify_links_and_payload(
         // Happy path 1: this is the first entry, so we won't find a lipmaa link in the store
         (None, None, seq_num, _) if seq_num == 1 => Ok(()),
         // Happy path 2: seq is larger than one and we can find the lipmaa link in the store
-        (Some((lipmaa, lipmaa_hash)), Some(ref entry_lipmaa), seq_num, true) if seq_num > 1 => {
+        (Some((lipmaa, lipmaa_hash)), Some(entry_lipmaa), seq_num, true) if seq_num > 1 => {
             // Make sure the lipmaa entry hash matches what's in the entry.
-            ensure!(lipmaa_hash == **entry_lipmaa, LipmaaHashDoesNotMatch);
+            ensure!(lipmaa_hash == *entry_lipmaa, LipmaaHashDoesNotMatch);
 
             let lipmaa_entry = decode(lipmaa).context(DecodeLipmaaEntry)?;
 
@@ -103,7 +103,7 @@ pub fn verify_links_and_payload(
         (_, None, seq_num) if seq_num == 1 => Ok(()),
 
         //Happy path 2: This does have a backlink and we found it.
-        (Some((backlink, backlink_hash)), Some(ref entry_backlink), seq_num) if seq_num > 1 => {
+        (Some((backlink, backlink_hash)), Some(entry_backlink), seq_num) if seq_num > 1 => {
             let backlink_entry = decode(backlink).context(DecodeBacklinkEntry)?;
 
             // Verify that the log_id of the entry is the same as the lipmaa entry
@@ -125,7 +125,7 @@ pub fn verify_links_and_payload(
             ensure!(!backlink_entry.is_end_of_feed, PublishedAfterEndOfFeed);
 
             // Verify the backlink hashes match
-            ensure!(backlink_hash == **entry_backlink, BacklinkHashDoesNotMatch);
+            ensure!(backlink_hash == *entry_backlink, BacklinkHashDoesNotMatch);
 
             Ok(())
         }

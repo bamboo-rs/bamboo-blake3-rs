@@ -17,12 +17,12 @@ pub use error::*;
 ///
 /// Returned [Entry] references `bytes`.
 pub fn decode<'a>(bytes: &'a [u8]) -> Result<Entry<&'a [u8]>, Error> {
-    ensure!(bytes.len() > 0, DecodeInputIsLengthZero);
+    ensure!(!bytes.is_empty(), DecodeInputIsLengthZero);
 
     // Decode is end of feed
     let is_end_of_feed = bytes[0] == 1;
 
-    ensure!(bytes.len() >= PUBLIC_KEY_LENGTH + 1, DecodeAuthorError);
+    ensure!(bytes.len() > PUBLIC_KEY_LENGTH, DecodeAuthorError);
 
     // Decode the author
     let author = DalekPublicKey::from_bytes(&bytes[1..PUBLIC_KEY_LENGTH + 1])
@@ -48,13 +48,13 @@ pub fn decode<'a>(bytes: &'a [u8]) -> Result<Entry<&'a [u8]>, Error> {
     let (backlink, lipmaa_link, remaining_bytes) = match (seq_num, lipmaa_is_required) {
         (1, _) => (None, None, remaining_bytes),
         (_, true) => {
-            let (lipmaa_link, remaining_bytes) = decode_blake3_hash(&remaining_bytes).context(DecodeLipmaaError)?;
+            let (lipmaa_link, remaining_bytes) = decode_blake3_hash(remaining_bytes).context(DecodeLipmaaError)?;
 
-            let (backlink, remaining_bytes) = decode_blake3_hash(&remaining_bytes).context(DecodeBacklinkError)?;
+            let (backlink, remaining_bytes) = decode_blake3_hash(remaining_bytes).context(DecodeBacklinkError)?;
             (Some(backlink), Some(lipmaa_link), remaining_bytes)
         }
         (_, false) => {
-            let (backlink, remaining_bytes) = decode_blake3_hash(&remaining_bytes).context(DecodeBacklinkError)?;
+            let (backlink, remaining_bytes) = decode_blake3_hash(remaining_bytes).context(DecodeBacklinkError)?;
             (Some(backlink), None, remaining_bytes)
         }
     };
@@ -66,7 +66,7 @@ pub fn decode<'a>(bytes: &'a [u8]) -> Result<Entry<&'a [u8]>, Error> {
 
     // Decode the payload hash
     let (payload_hash, remaining_bytes) =
-        decode_blake3_hash(&remaining_bytes).context(DecodePayloadHashError)?;
+        decode_blake3_hash(remaining_bytes).context(DecodePayloadHashError)?;
 
     // Decode the signature
     let (sig, _) = Signature::<&[u8]>::decode(remaining_bytes).context(DecodeSigError)?;
