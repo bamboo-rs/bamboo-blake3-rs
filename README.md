@@ -1,4 +1,4 @@
-# bamboo-blake3-rs
+# bamboo-rs-smol
 
 > Rust implementation of [bamboo-blake3](https://github.com/bamboo-rs/bamboo-blake3).
 

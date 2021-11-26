@@ -5,7 +5,7 @@ mod error;
 pub use error::VerifyError;
 
 #[repr(C)]
-pub struct VerifyEd25519Blake2bEntryArgs<'a> {
+pub struct VerifyEd25519Blake3EntryArgs<'a> {
     pub entry_bytes: &'a u8,
     pub entry_length: usize,
     pub payload_bytes: &'a u8,
@@ -18,7 +18,7 @@ pub struct VerifyEd25519Blake2bEntryArgs<'a> {
 
 #[no_mangle]
 pub extern "C" fn verify_ed25519_blake2b_entry(
-    args: &mut VerifyEd25519Blake2bEntryArgs,
+    args: &mut VerifyEd25519Blake3EntryArgs,
 ) -> VerifyError {
     let lipmaalink_slice =
         unsafe { slice::from_raw_parts(args.lipmaalink_bytes, args.lipmaalink_length) };

@@ -7,8 +7,8 @@ use bamboo_rs_core::entry::{
     decode as decode_entry, into_owned, publish as publish_entry, verify as verify_entry,
     MAX_ENTRY_SIZE,
 };
-use bamboo_rs_core::yamf_hash::new_blake2b;
-use bamboo_rs_core::{lipmaa, Entry, YamfHash};
+use bamboo_rs_core::yasmf_hash::new_blake3;
+use bamboo_rs_core::{lipmaa, Entry, YasmfHash};
 use bamboo_rs_core::{Keypair, PublicKey, SecretKey, Signature};
 use rand::rngs::OsRng;
 use wasm_bindgen::prelude::*;
@@ -34,8 +34,8 @@ pub fn max_entry_size() -> u32 {
 
 #[wasm_bindgen(inspectable)]
 pub struct BambooEntry {
-    hash: YamfHash<ArrayVec<[u8; 64]>>,
-    value: Entry<ArrayVec<[u8; 64]>, ArrayVec<[u8; 64]>>,
+    hash: YasmfHash<ArrayVec<[u8; 32]>>,
+    value: Entry<ArrayVec<[u8; 32]>, ArrayVec<[u8; 64]>>,
 }
 
 #[wasm_bindgen]
@@ -108,12 +108,12 @@ impl BambooEntry {
 
 #[wasm_bindgen]
 pub fn decode(buffer: &[u8]) -> Result<BambooEntry, JsValue> {
-    let hash = new_blake2b(buffer);
+    let hash = new_blake3(buffer);
     let entry = decode_entry(buffer).map_err(|err| JsValue::from_str(&err.to_string()))?;
 
     let entry = into_owned(&entry);
     let bamboo_entry = BambooEntry {
-        hash: hash,
+        hash,
         value: entry,
     };
 
