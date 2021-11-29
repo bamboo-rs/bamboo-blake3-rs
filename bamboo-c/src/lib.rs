@@ -24,4 +24,4 @@ pub mod decode;
 pub mod publish;
 pub mod verify;
 
-pub use bamboo_rs_core::BLAKE3_HASH_SIZE;
+pub use bamboo_rs_core_ed25519_yasmf::BLAKE3_HASH_SIZE;

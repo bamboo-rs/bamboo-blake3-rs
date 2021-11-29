@@ -9,7 +9,7 @@ name = "generate"
 path = "src/main.rs"
 
 [dependencies]
-bamboo-rs-core = {path = "../bamboo-rs-core"}
+bamboo-rs-core-ed25519-yasmf = {path = "../bamboo-rs-core"}
 bamboo-rs-log = {path = "../bamboo-rs-log"}
 hex = "0.3.2"
 serde = { version = "1.0.90", features = ["derive"] }

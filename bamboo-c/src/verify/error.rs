@@ -1,4 +1,4 @@
-use bamboo_rs_core::entry::verify::Error as BambooVerifyError;
+use bamboo_rs_core_ed25519_yasmf::entry::verify::Error as BambooVerifyError;
 
 #[repr(C)]
 /// cbindgen:prefix-with-name=true

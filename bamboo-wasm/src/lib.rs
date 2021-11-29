@@ -3,13 +3,13 @@ pub mod utils;
 pub use utils::set_panic_hook;
 
 use arrayvec::*;
-use bamboo_rs_core::entry::{
+use bamboo_rs_core_ed25519_yasmf::entry::{
     decode as decode_entry, into_owned, publish as publish_entry, verify as verify_entry,
     MAX_ENTRY_SIZE,
 };
-use bamboo_rs_core::yasmf_hash::new_blake3;
-use bamboo_rs_core::{lipmaa, Entry, YasmfHash};
-use bamboo_rs_core::{Keypair, PublicKey, SecretKey, Signature};
+use bamboo_rs_core_ed25519_yasmf::yasmf_hash::new_blake3;
+use bamboo_rs_core_ed25519_yasmf::{lipmaa, Entry, YasmfHash};
+use bamboo_rs_core_ed25519_yasmf::{Keypair, PublicKey, SecretKey, Signature};
 use rand::rngs::OsRng;
 use wasm_bindgen::prelude::*;
 
@@ -147,8 +147,8 @@ pub fn publish(
     lipmaa_entry_vec: Option<Vec<u8>>,
     backlink_vec: Option<Vec<u8>>,
 ) -> Result<Vec<u8>, JsValue> {
-    let mut out = Vec::with_capacity(bamboo_rs_core::entry::MAX_ENTRY_SIZE);
-    out.resize(bamboo_rs_core::entry::MAX_ENTRY_SIZE, 0);
+    let mut out = Vec::with_capacity(bamboo_rs_core_ed25519_yasmf::entry::MAX_ENTRY_SIZE);
+    out.resize(bamboo_rs_core_ed25519_yasmf::entry::MAX_ENTRY_SIZE, 0);
 
     let public_key =
         PublicKey::from_bytes(public_key).map_err(|e| JsValue::from_str(&e.to_string()))?;

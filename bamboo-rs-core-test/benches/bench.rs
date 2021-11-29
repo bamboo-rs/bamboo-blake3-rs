@@ -2,12 +2,12 @@
 extern crate criterion;
 extern crate varu64;
 
-use bamboo_rs_core::entry::decode;
-use bamboo_rs_core::entry::publish;
-use bamboo_rs_core::entry::verify::batch::verify_batch_signatures;
-use bamboo_rs_core::entry::verify::Error as VerifyError;
-use bamboo_rs_core::entry::verify_batch;
-use bamboo_rs_core::verify;
+use bamboo_rs_core_ed25519_yasmf::entry::decode;
+use bamboo_rs_core_ed25519_yasmf::entry::publish;
+use bamboo_rs_core_ed25519_yasmf::entry::verify::batch::verify_batch_signatures;
+use bamboo_rs_core_ed25519_yasmf::entry::verify::Error as VerifyError;
+use bamboo_rs_core_ed25519_yasmf::entry::verify_batch;
+use bamboo_rs_core_ed25519_yasmf::verify;
 use bamboo_rs_log::entry_store::MemoryEntryStore;
 use bamboo_rs_log::*;
 
@@ -163,7 +163,7 @@ fn verify_entries_benches(c: &mut Criterion) {
                 .enumerate()
                 .map(|(index, (entry, payload))| {
                     let seq_num = index + 1;
-                    let lipmaa_num = bamboo_rs_core::lipmaa(seq_num as u64) - 1;
+                    let lipmaa_num = bamboo_rs_core_ed25519_yasmf::lipmaa(seq_num as u64) - 1;
 
                     let lipmaa_link = entries
                         .get(lipmaa_num as usize)

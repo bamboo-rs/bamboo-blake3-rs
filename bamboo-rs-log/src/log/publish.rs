@@ -2,7 +2,7 @@ use core::fmt::Debug;
 use lipmaa_link::lipmaa;
 
 use crate::entry_store::EntryStore;
-use bamboo_rs_core::entry::publish;
+use bamboo_rs_core_ed25519_yasmf::entry::publish;
 use snafu::{ResultExt, OptionExt};
 
 use super::Log;
@@ -50,8 +50,8 @@ mod tests {
     use crate::entry_store::MemoryEntryStore;
     use crate::log::{Log, Error};
     use crate::EntryStore;
-    use bamboo_rs_core::entry::decode;
-    use bamboo_rs_core::{Keypair};
+    use bamboo_rs_core_ed25519_yasmf::entry::decode;
+    use bamboo_rs_core_ed25519_yasmf::{Keypair};
 
     use rand::rngs::OsRng;
 

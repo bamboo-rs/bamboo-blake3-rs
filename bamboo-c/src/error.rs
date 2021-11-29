@@ -1,5 +1,5 @@
 use snafu::Snafu;
-use bamboo_rs_core::entry::decode::Error as DecodeError;
+use bamboo_rs_core_ed25519_yasmf::entry::decode::Error as DecodeError;
 
 #[derive(Debug, Snafu)]
 #[snafu(visibility = "pub(crate)")]

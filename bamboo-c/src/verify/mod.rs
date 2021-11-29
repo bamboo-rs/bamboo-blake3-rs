@@ -1,4 +1,4 @@
-use bamboo_rs_core::entry::verify;
+use bamboo_rs_core_ed25519_yasmf::entry::verify;
 use core::slice;
 
 mod error;

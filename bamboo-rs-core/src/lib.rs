@@ -20,7 +20,7 @@
 //! require passing the previous seq_num, the previous entry, and lipmaa_link.
 //!
 //! ```
-//! use bamboo_rs_core::{publish, verify, decode, yasmf_hash::new_blake3, Entry, Signature, YasmfHash, Keypair, entry::MAX_ENTRY_SIZE};
+//! use bamboo_rs_core_ed25519_yasmf::{publish, verify, decode, yasmf_hash::new_blake3, Entry, Signature, YasmfHash, Keypair, entry::MAX_ENTRY_SIZE};
 //! use rand::rngs::OsRng;
 //!
 //! let mut csprng: OsRng = OsRng {};

@@ -1,5 +1,5 @@
-use bamboo_rs_core::entry::publish;
-use bamboo_rs_core::Keypair;
+use bamboo_rs_core_ed25519_yasmf::entry::publish;
+use bamboo_rs_core_ed25519_yasmf::Keypair;
 use ed25519_dalek::{KEYPAIR_LENGTH, SECRET_KEY_LENGTH};
 
 use core::slice;

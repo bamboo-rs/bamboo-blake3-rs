@@ -1,8 +1,8 @@
 use snafu::Snafu;
 use core::fmt::Debug;
-use bamboo_rs_core::entry::decode::Error as DecodeError;
-use bamboo_rs_core::entry::verify::Error as VerifyError;
-use bamboo_rs_core::entry::publish::Error as PublishError;
+use bamboo_rs_core_ed25519_yasmf::entry::decode::Error as DecodeError;
+use bamboo_rs_core_ed25519_yasmf::entry::verify::Error as VerifyError;
+use bamboo_rs_core_ed25519_yasmf::entry::publish::Error as PublishError;
 use crate::entry_store::EntryStore;
 
 #[derive(Debug, Snafu)]

@@ -1,13 +1,13 @@
 #[cfg(test)]
 mod tests {
-    use bamboo_rs_core::entry::decode;
-    use bamboo_rs_core::entry::publish::Error as PublishError;
-    use bamboo_rs_core::entry::verify::batch::verify_batch_signatures;
-    use bamboo_rs_core::entry::verify::Error as VerifyError;
-    use bamboo_rs_core::entry::verify_batch;
-    use bamboo_rs_core::signature::ED25519_SIGNATURE_SIZE;
-    use bamboo_rs_core::yasmf_hash::BLAKE3_HASH_SIZE;
-    use bamboo_rs_core::{publish, verify, Entry, Signature, YasmfHash};
+    use bamboo_rs_core_ed25519_yasmf::entry::decode;
+    use bamboo_rs_core_ed25519_yasmf::entry::publish::Error as PublishError;
+    use bamboo_rs_core_ed25519_yasmf::entry::verify::batch::verify_batch_signatures;
+    use bamboo_rs_core_ed25519_yasmf::entry::verify::Error as VerifyError;
+    use bamboo_rs_core_ed25519_yasmf::entry::verify_batch;
+    use bamboo_rs_core_ed25519_yasmf::signature::ED25519_SIGNATURE_SIZE;
+    use bamboo_rs_core_ed25519_yasmf::yasmf_hash::BLAKE3_HASH_SIZE;
+    use bamboo_rs_core_ed25519_yasmf::{publish, verify, Entry, Signature, YasmfHash};
     use ed25519_dalek::{Keypair, PublicKey};
     use rand::rngs::OsRng;
     use std::io::Write;
