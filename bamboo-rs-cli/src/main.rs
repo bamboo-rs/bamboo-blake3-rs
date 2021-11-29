@@ -1,5 +1,5 @@
-use bamboo_rs_core::entry::MAX_ENTRY_SIZE;
-use bamboo_rs_core::{decode, lipmaa, publish, verify, Keypair, YamfHash};
+use bamboo_rs_core_ed25519_yasmf::entry::MAX_ENTRY_SIZE;
+use bamboo_rs_core_ed25519_yasmf::{decode, lipmaa, publish, verify, Keypair, YasmfHash};
 use blake2b_simd::blake2b;
 use rand::rngs::OsRng;
 use snafu::ResultExt;
@@ -164,11 +164,11 @@ fn main() -> Result<()> {
         Opts::Hash { file } => {
             let bytes = read_file(&file).context(DecodeEntryFile { filename: file })?;
             let hash = blake2b(&bytes);
-            let yamf_hash = YamfHash::Blake2b(hash.as_bytes());
-            let mut yamf_hash_bytes = Vec::new();
-            yamf_hash.encode_write(&mut yamf_hash_bytes).unwrap();
+            let yasmf_hash = YasmfHash::Blake3(hash.as_bytes());
+            let mut yasmf_hash_bytes = Vec::new();
+            yasmf_hash.encode_write(&mut yasmf_hash_bytes).unwrap();
 
-            std::io::stdout().write_all(&yamf_hash_bytes).unwrap();
+            std::io::stdout().write_all(&yasmf_hash_bytes).unwrap();
         }
     };
     Ok(())

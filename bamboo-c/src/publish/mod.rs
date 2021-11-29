@@ -1,5 +1,5 @@
-use bamboo_rs_core::entry::publish;
-use bamboo_rs_core::Keypair;
+use bamboo_rs_core_ed25519_yasmf::entry::publish;
+use bamboo_rs_core_ed25519_yasmf::Keypair;
 use ed25519_dalek::{KEYPAIR_LENGTH, SECRET_KEY_LENGTH};
 
 use core::slice;
@@ -7,7 +7,7 @@ pub mod error;
 pub use error::PublishError;
 
 #[repr(C)]
-pub struct PublishEd25519Blake2bEntryArgs<'a> {
+pub struct PublishEd25519Blake3EntryArgs<'a> {
     pub out: &'a mut u8,
     pub out_length: usize,
     pub payload_bytes: &'a u8,
@@ -27,7 +27,7 @@ pub struct PublishEd25519Blake2bEntryArgs<'a> {
 
 #[no_mangle]
 pub extern "C" fn publish_ed25519_blake2b_entry(
-    args: &mut PublishEd25519Blake2bEntryArgs,
+    args: &mut PublishEd25519Blake3EntryArgs,
 ) -> PublishError {
     let out: &mut [u8] = unsafe { slice::from_raw_parts_mut(args.out, args.out_length) };
     let payload: &[u8] = unsafe { slice::from_raw_parts(args.payload_bytes, args.payload_length) };

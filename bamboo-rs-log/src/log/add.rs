@@ -1,8 +1,8 @@
 use core::fmt::Debug;
 use super::Log;
 use crate::entry_store::EntryStore;
-use bamboo_rs_core::entry::decode;
-use bamboo_rs_core::entry::verify;
+use bamboo_rs_core_ed25519_yasmf::entry::decode;
+use bamboo_rs_core_ed25519_yasmf::entry::verify;
 use lipmaa_link::lipmaa;
 use snafu::ResultExt;
 
@@ -52,11 +52,11 @@ mod tests {
     use crate::entry_store::MemoryEntryStore;
     use crate::{EntryStore, Log};
     use arrayvec::ArrayVec;
-    use bamboo_rs_core::signature::{Signature, ED25519_SIGNATURE_SIZE};
-    use bamboo_rs_core::yamf_hash::{new_blake2b, YamfHash};
-    use bamboo_rs_core::yamf_signatory::YamfSignatory;
-    use bamboo_rs_core::Error;
-    use bamboo_rs_core::{Entry, Keypair};
+    use bamboo_rs_core_ed25519_yasmf::signature::{Signature, ED25519_SIGNATURE_SIZE};
+    use bamboo_rs_core_ed25519_yasmf::yasmf_hash::{new_blake3, YasmfHash};
+    use bamboo_rs_core_ed25519_yasmf::yamf_signatory::YamfSignatory;
+    use bamboo_rs_core_ed25519_yasmf::Error;
+    use bamboo_rs_core_ed25519_yasmf::{Entry, Keypair};
     use rand::rngs::OsRng;
     use std::convert::TryInto;
 
@@ -134,12 +134,12 @@ mod tests {
 
         let first_entry = remote_log.store.get_entry_ref(1).unwrap().unwrap();
 
-        let backlink = new_blake2b(first_entry);
-        let lipmaa_link = new_blake2b(first_entry);
+        let backlink = new_blake3(first_entry);
+        let lipmaa_link = new_blake3(first_entry);
 
         let mut second_entry = Entry::<_, _, &[u8]> {
             is_end_of_feed: false,
-            payload_hash: new_blake2b(&payload.as_bytes()),
+            payload_hash: new_blake3(&payload.as_bytes()),
             payload_size: payload.len() as u64,
             author: YamfSignatory::Ed25519(&remote_log.public_key.as_bytes()[..], None),
             seq_num: 2,
@@ -234,10 +234,10 @@ mod tests {
         log.add(&first_entry_bytes, None)
             .expect("error adding first entry, this is not normal");
 
-        let incorrect_lipmaa = new_blake2b(b"noooo");
+        let incorrect_lipmaa = new_blake3(b"noooo");
 
         second_entry.lipmaa_link = match second_entry.lipmaa_link {
-            Some(YamfHash::Blake2b(_)) => Some(YamfHash::from(&incorrect_lipmaa)),
+            Some(YasmfHash::Blake3(_)) => Some(YasmfHash::from(&incorrect_lipmaa)),
             link => link,
         }; //set the lipmaa link to be zero
 
@@ -269,9 +269,9 @@ mod tests {
         log.add(&first_entry_bytes, None)
             .expect("error adding first entry, this is not normal");
 
-        let incorrect_backlink = new_blake2b(b"noooo");
+        let incorrect_backlink = new_blake3(b"noooo");
         second_entry.backlink = match second_entry.backlink {
-            Some(YamfHash::Blake2b(_)) => Some(YamfHash::from(&incorrect_backlink)),
+            Some(YasmfHash::Blake3(_)) => Some(YasmfHash::from(&incorrect_backlink)),
             link => link,
         }; //set the lipmaa link to be zero
 
@@ -298,11 +298,11 @@ mod tests {
 
         let first_entry = remote_log.store.get_entry_ref(1).unwrap().unwrap();
 
-        let backlink = new_blake2b(first_entry);
+        let backlink = new_blake3(first_entry);
 
         let mut second_entry = Entry::<_, _, &[u8]> {
             is_end_of_feed: false,
-            payload_hash: new_blake2b(&payload.as_bytes()),
+            payload_hash: new_blake3(&payload.as_bytes()),
             payload_size: payload.len() as u64,
             author: YamfSignatory::Ed25519(&remote_log.public_key.as_bytes()[..], None),
             seq_num: 2,
@@ -349,11 +349,11 @@ mod tests {
 
         let first_entry = remote_log.store.get_entry_ref(1).unwrap().unwrap();
 
-        let lipmaa_link = new_blake2b(first_entry);
+        let lipmaa_link = new_blake3(first_entry);
 
         let mut second_entry = Entry::<_, _, &[u8]> {
             is_end_of_feed: false,
-            payload_hash: new_blake2b(&payload.as_bytes()),
+            payload_hash: new_blake3(&payload.as_bytes()),
             payload_size: payload.len() as u64,
             author: YamfSignatory::Ed25519(&remote_log.public_key.as_ref()[..], None),
             seq_num: 2,

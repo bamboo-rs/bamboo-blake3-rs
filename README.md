@@ -1,19 +1,16 @@
-# bamboo-blake3-rs
+# bamboo-rs-ed25519-yasmf
 
-> Rust implementation of [bamboo-blake3](https://github.com/bamboo-rs/bamboo-blake3).
-
-## Docs
-[Rust docs](https://pietgeursen.github.io/bamboo-rs/bamboo_rs_core/index.html)
+> Rust implementation of [bamboo-ed25519-yasmf](https://github.com/bamboo-rs/bamboo-ed25519-yasmf).
 
 ## About
 
-`bamboo-rs` aspires to be portable, fast and correct.
+`bamboo-rs-ed25519-yasmf` aspires to be portable, fast and correct.
 
 ### Portable
 
-`bamboo-rs-core` supports compilation with `no_std` and uses crypto libraries that support this too. [Anywhere rust can go](https://forge.rust-lang.org/release/platform-support.html), bamboo can go too, including microcontrollers, mobile and in the browser via web assembly.
+`bamboo-rs-core-ed25519-yasmf` supports compilation with `no_std` and uses crypto libraries that support this too. [Anywhere rust can go](https://forge.rust-lang.org/release/platform-support.html), bamboo can go too, including microcontrollers, mobile and in the browser via web assembly.
 
-Bamboo releases target 29 different architectures. Releases of the bamboo_core library expose a c api so you can build bindings to many other languages.
+Bamboo releases target many different architectures. Releases of the bamboo_core library expose a c api so you can build bindings to many other languages.
 
 ### Fast
 

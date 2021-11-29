@@ -24,7 +24,7 @@ use serde::{Deserialize, Serialize};
 use ed25519_dalek::PublicKey as DalekPublicKey;
 
 use super::signature::{Signature, MAX_SIGNATURE_SIZE};
-use super::yamf_hash::{YamfHash, MAX_YAMF_HASH_SIZE};
+use super::yasmf_hash::{YasmfHash, MAX_YAMF_HASH_SIZE};
 
 pub use ed25519_dalek::PUBLIC_KEY_LENGTH;
 pub const TAG_BYTE_LENGTH: usize = 1;
@@ -36,7 +36,7 @@ pub const MAX_ENTRY_SIZE_: usize = TAG_BYTE_LENGTH
     + (MAX_VARU64_SIZE * 3);
 
 /// This is useful if you need to know at compile time how big an entry can get.
-pub const MAX_ENTRY_SIZE: usize = 322;
+pub const MAX_ENTRY_SIZE: usize = 226;
 
 // Yes, this is hacky. It's because cbindgen can't understand how to add consts together. This is a
 // way to hard code a value for MAX_ENTRY_SIZE that cbindgen can use, but make sure at compile time
@@ -55,7 +55,7 @@ where
     pub log_id: u64,
     pub is_end_of_feed: bool,
     #[cfg_attr(feature = "std", serde(bound(deserialize = "H: From<Vec<u8>>")))]
-    pub payload_hash: YamfHash<H>,
+    pub payload_hash: YasmfHash<H>,
     pub payload_size: u64,
     #[cfg_attr(
         feature = "std",
@@ -66,8 +66,8 @@ where
     )]
     pub author: DalekPublicKey,
     pub seq_num: u64,
-    pub backlink: Option<YamfHash<H>>,
-    pub lipmaa_link: Option<YamfHash<H>>,
+    pub backlink: Option<YasmfHash<H>>,
+    pub lipmaa_link: Option<YasmfHash<H>>,
     #[cfg_attr(feature = "std", serde(bound(deserialize = "S: From<Vec<u8>>")))]
     pub sig: Option<Signature<S>>,
 }
@@ -98,7 +98,7 @@ where
     }
 }
 
-pub fn into_owned<H, S>(entry: &Entry<H, S>) -> Entry<ArrayVec<[u8; 64]>, ArrayVec<[u8; 64]>>
+pub fn into_owned<H, S>(entry: &Entry<H, S>) -> Entry<ArrayVec<[u8; 32]>, ArrayVec<[u8; 64]>>
 where
     H: Borrow<[u8]>,
     S: Borrow<[u8]>,
@@ -113,27 +113,27 @@ where
     };
 
     let payload_hash = match entry.payload_hash {
-        YamfHash::Blake2b(ref s) => {
-            let mut vec = ArrayVec::<[u8; 64]>::new();
+        YasmfHash::Blake3(ref s) => {
+            let mut vec = ArrayVec::<[u8; 32]>::new();
             vec.try_extend_from_slice(&s.borrow()[..]).unwrap();
-            YamfHash::Blake2b(vec)
+            YasmfHash::Blake3(vec)
         }
     };
 
     let backlink = match entry.backlink {
-        Some(YamfHash::Blake2b(ref s)) => {
-            let mut vec = ArrayVec::<[u8; 64]>::new();
+        Some(YasmfHash::Blake3(ref s)) => {
+            let mut vec = ArrayVec::<[u8; 32]>::new();
             vec.try_extend_from_slice(&s.borrow()[..]).unwrap();
-            Some(YamfHash::Blake2b(vec))
+            Some(YasmfHash::Blake3(vec))
         }
         None => None,
     };
 
     let lipmaa_link = match entry.lipmaa_link {
-        Some(YamfHash::Blake2b(ref s)) => {
-            let mut vec = ArrayVec::<[u8; 64]>::new();
+        Some(YasmfHash::Blake3(ref s)) => {
+            let mut vec = ArrayVec::<[u8; 32]>::new();
             vec.try_extend_from_slice(&s.borrow()[..]).unwrap();
-            Some(YamfHash::Blake2b(vec))
+            Some(YasmfHash::Blake3(vec))
         }
         None => None,
     };

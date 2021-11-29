@@ -1,6 +1,6 @@
 #[cfg(test)]
 mod tests {
-    use bamboo_rs_core::signature::{Error, Signature, ED25519_SIGNATURE_SIZE};
+    use bamboo_rs_core_ed25519_yasmf::signature::{Error, Signature, ED25519_SIGNATURE_SIZE};
 
     #[test]
     fn decode_signature() {

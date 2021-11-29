@@ -20,7 +20,7 @@
 //! require passing the previous seq_num, the previous entry, and lipmaa_link.
 //!
 //! ```
-//! use bamboo_rs_core::{publish, verify, decode, yamf_hash::new_blake2b, Entry, Signature, YamfHash, Keypair, entry::MAX_ENTRY_SIZE};
+//! use bamboo_rs_core_ed25519_yasmf::{publish, verify, decode, yasmf_hash::new_blake3, Entry, Signature, YasmfHash, Keypair, entry::MAX_ENTRY_SIZE};
 //! use rand::rngs::OsRng;
 //!
 //! let mut csprng: OsRng = OsRng {};
@@ -45,7 +45,7 @@
 //! let entry = decode(&out[..size]).unwrap();
 //!
 //! let is_verified = verify(&out[..size], Some(payload.as_bytes()), None, None).is_ok();
-//! let payload_hash = new_blake2b(payload.as_bytes());
+//! let payload_hash = new_blake3(payload.as_bytes());
 //!
 //! assert!(is_verified);
 //! assert_eq!(entry.log_id, log_id);
@@ -64,11 +64,11 @@ extern crate static_assertions;
 
 pub mod entry;
 pub mod signature;
-pub mod yamf_hash;
+pub mod yasmf_hash;
 
 mod util;
 
-pub use crate::yamf_hash::{YamfHash, BLAKE2B_HASH_SIZE, OUTBYTES};
+pub use crate::yasmf_hash::{YasmfHash, BLAKE3_OUT_LEN, BLAKE3_HASH_SIZE};
 pub use ed25519_dalek::{Keypair, PublicKey, SecretKey, SignatureError};
 #[cfg(feature = "std")]
 pub use entry::verify::verify_batch;

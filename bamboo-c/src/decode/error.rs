@@ -1,4 +1,4 @@
-use bamboo_rs_core::entry::decode::Error as BambooDecodeError;
+use bamboo_rs_core_ed25519_yasmf::entry::decode::Error as BambooDecodeError;
 
 #[repr(C)]
 /// cbindgen:prefix-with-name=true

@@ -3,7 +3,7 @@ use varu64::decode as varu64_decode;
 use ed25519_dalek::{PublicKey as DalekPublicKey, PUBLIC_KEY_LENGTH};
 
 use crate::signature::Signature;
-use crate::yamf_hash::YamfHash;
+use crate::yasmf_hash::YasmfHash;
 
 use super::{is_lipmaa_required, Entry};
 use snafu::{ensure, NoneError, ResultExt};
@@ -47,14 +47,14 @@ pub fn decode<'a>(bytes: &'a [u8]) -> Result<Entry<&'a [u8], &'a [u8]>, Error> {
         (1, _) => (None, None, remaining_bytes),
         (_, true) => {
             let (lipmaa_link, remaining_bytes) =
-                YamfHash::<&[u8]>::decode(remaining_bytes).context(DecodeLipmaaError)?;
+                YasmfHash::<&[u8]>::decode(remaining_bytes).context(DecodeLipmaaError)?;
             let (backlink, remaining_bytes) =
-                YamfHash::<&[u8]>::decode(remaining_bytes).context(DecodeBacklinkError)?;
+                YasmfHash::<&[u8]>::decode(remaining_bytes).context(DecodeBacklinkError)?;
             (Some(backlink), Some(lipmaa_link), remaining_bytes)
         }
         (_, false) => {
             let (backlink, remaining_bytes) =
-                YamfHash::<&[u8]>::decode(remaining_bytes).context(DecodeBacklinkError)?;
+                YasmfHash::<&[u8]>::decode(remaining_bytes).context(DecodeBacklinkError)?;
             (Some(backlink), None, remaining_bytes)
         }
     };
@@ -66,7 +66,7 @@ pub fn decode<'a>(bytes: &'a [u8]) -> Result<Entry<&'a [u8], &'a [u8]>, Error> {
 
     // Decode the payload hash
     let (payload_hash, remaining_bytes) =
-        YamfHash::<&[u8]>::decode(remaining_bytes).context(DecodePayloadHashError)?;
+        YasmfHash::<&[u8]>::decode(remaining_bytes).context(DecodePayloadHashError)?;
 
     // Decode the signature
     let (sig, _) = Signature::<&[u8]>::decode(remaining_bytes).context(DecodeSigError)?;

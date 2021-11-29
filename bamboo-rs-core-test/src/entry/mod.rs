@@ -1,13 +1,13 @@
 #[cfg(test)]
 mod tests {
-    use bamboo_rs_core::entry::decode;
-    use bamboo_rs_core::entry::publish::Error as PublishError;
-    use bamboo_rs_core::entry::verify::batch::verify_batch_signatures;
-    use bamboo_rs_core::entry::verify::Error as VerifyError;
-    use bamboo_rs_core::entry::verify_batch;
-    use bamboo_rs_core::signature::ED25519_SIGNATURE_SIZE;
-    use bamboo_rs_core::yamf_hash::BLAKE2B_HASH_SIZE;
-    use bamboo_rs_core::{publish, verify, Entry, Signature, YamfHash};
+    use bamboo_rs_core_ed25519_yasmf::entry::decode;
+    use bamboo_rs_core_ed25519_yasmf::entry::publish::Error as PublishError;
+    use bamboo_rs_core_ed25519_yasmf::entry::verify::batch::verify_batch_signatures;
+    use bamboo_rs_core_ed25519_yasmf::entry::verify::Error as VerifyError;
+    use bamboo_rs_core_ed25519_yasmf::entry::verify_batch;
+    use bamboo_rs_core_ed25519_yasmf::signature::ED25519_SIGNATURE_SIZE;
+    use bamboo_rs_core_ed25519_yasmf::yasmf_hash::BLAKE3_HASH_SIZE;
+    use bamboo_rs_core_ed25519_yasmf::{publish, verify, Entry, Signature, YasmfHash};
     use ed25519_dalek::{Keypair, PublicKey};
     use rand::rngs::OsRng;
     use std::io::Write;
@@ -15,10 +15,10 @@ mod tests {
 
     #[test]
     fn encode_write_decode_entry() {
-        let backlink_bytes = [0xAA; BLAKE2B_HASH_SIZE];
-        let backlink = YamfHash::<&[u8]>::Blake2b(backlink_bytes[..].into());
-        let payload_hash_bytes = [0xAB; BLAKE2B_HASH_SIZE];
-        let payload_hash = YamfHash::<&[u8]>::Blake2b(payload_hash_bytes[..].into());
+        let backlink_bytes = [0xAA; BLAKE3_HASH_SIZE];
+        let backlink = YasmfHash::<&[u8]>::Blake3(backlink_bytes[..].into());
+        let payload_hash_bytes = [0xAB; BLAKE3_HASH_SIZE];
+        let payload_hash = YasmfHash::<&[u8]>::Blake3(payload_hash_bytes[..].into());
         let payload_size = 512;
         let seq_num = 2;
         let log_id = 333;
@@ -42,13 +42,13 @@ mod tests {
         let entry = decode(&entry_vec).unwrap();
 
         match entry.payload_hash {
-            YamfHash::Blake2b(ref hash) => {
+            YasmfHash::Blake3(ref hash) => {
                 assert_eq!(hash.as_ref(), &payload_hash_bytes[..]);
             }
         }
 
         match entry.backlink {
-            Some(YamfHash::Blake2b(ref hash)) => {
+            Some(YasmfHash::Blake3(ref hash)) => {
                 assert_eq!(hash.as_ref(), &backlink_bytes[..]);
             }
             _ => panic!(),
