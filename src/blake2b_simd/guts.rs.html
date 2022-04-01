@@ -1,4 +1,6 @@
-<!DOCTYPE html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1.0"><meta name="generator" content="rustdoc"><meta name="description" content="Source of the Rust file `&#x2F;home&#x2F;runner&#x2F;.cargo&#x2F;registry&#x2F;src&#x2F;github.com-1ecc6299db9ec823&#x2F;blake2b_simd-0.5.11&#x2F;src&#x2F;guts.rs`."><meta name="keywords" content="rust, rustlang, rust-lang"><title>guts.rs - source</title><link rel="stylesheet" type="text/css" href="../../normalize.css"><link rel="stylesheet" type="text/css" href="../../rustdoc.css" id="mainThemeStyle"><link rel="stylesheet" type="text/css" href="../../light.css"  id="themeStyle"><link rel="stylesheet" type="text/css" href="../../dark.css" disabled ><link rel="stylesheet" type="text/css" href="../../ayu.css" disabled ><script id="default-settings" ></script><script src="../../storage.js"></script><script src="../../crates.js"></script><noscript><link rel="stylesheet" href="../../noscript.css"></noscript><link rel="alternate icon" type="image/png" href="../../favicon-16x16.png"><link rel="alternate icon" type="image/png" href="../../favicon-32x32.png"><link rel="icon" type="image/svg+xml" href="../../favicon.svg"><style type="text/css">#crate-search{background-image:url("../../down-arrow.svg");}</style></head><body class="rustdoc source"><!--[if lte IE 11]><div class="warning">This old browser is unsupported and will most likely display funky things.</div><![endif]--><nav class="sidebar"><div class="sidebar-menu" role="button">&#9776;</div><a href='../../blake2b_simd/index.html'><div class='logo-container rust-logo'><img src='../../rust-logo.png' alt='logo'></div></a></nav><div class="theme-picker"><button id="theme-picker" aria-label="Pick another theme!" aria-haspopup="menu" title="themes"><img width="18" height="18" alt="Pick another theme!" src="../../brush.svg"></button><div id="theme-choices" role="menu"></div></div><nav class="sub"><form class="search-form"><div class="search-container"><div><select id="crate-search"><option value="All crates">All crates</option></select><input class="search-input" name="search" disabled autocomplete="off" spellcheck="false" placeholder="Click or press ‘S’ to search, ‘?’ for more options…" type="search"></div><button type="button" id="help-button" title="help">?</button><a id="settings-menu" href="../../settings.html" title="settings"><img width="18" height="18" alt="Change settings" src="../../wheel.svg"></a></div></form></nav><section id="main" class="content"><div class="example-wrap"><pre class="line-numbers"><span id="1">  1</span>
+<!DOCTYPE html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1.0"><meta name="generator" content="rustdoc"><meta name="description" content="Source of the Rust file `&#x2F;home&#x2F;runner&#x2F;.cargo&#x2F;registry&#x2F;src&#x2F;github.com-1ecc6299db9ec823&#x2F;blake2b_simd-0.5.11&#x2F;src&#x2F;guts.rs`."><meta name="keywords" content="rust, rustlang, rust-lang"><title>guts.rs - source</title><link rel="preload" as="font" type="font/woff2" crossorigin href="../../SourceSerif4-Regular.ttf.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../FiraSans-Regular.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../FiraSans-Medium.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../SourceCodePro-Regular.ttf.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../SourceSerif4-Bold.ttf.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../SourceCodePro-Semibold.ttf.woff2"><link rel="stylesheet" type="text/css" href="../../normalize.css"><link rel="stylesheet" type="text/css" href="../../rustdoc.css" id="mainThemeStyle"><link rel="stylesheet" type="text/css" href="../../ayu.css" disabled><link rel="stylesheet" type="text/css" href="../../dark.css" disabled><link rel="stylesheet" type="text/css" href="../../light.css" id="themeStyle"><script id="default-settings" ></script><script src="../../storage.js"></script><script src="../../crates.js"></script><script defer src="../../main.js"></script><script defer src="../../source-script.js"></script><script defer src="../../source-files.js"></script>
+    <noscript><link rel="stylesheet" href="../../noscript.css"></noscript><link rel="alternate icon" type="image/png" href="../../favicon-16x16.png"><link rel="alternate icon" type="image/png" href="../../favicon-32x32.png"><link rel="icon" type="image/svg+xml" href="../../favicon.svg"></head><body class="rustdoc source"><!--[if lte IE 11]><div class="warning">This old browser is unsupported and will most likely display funky things.</div><![endif]--><nav class="sidebar"><div class="sidebar-menu" role="button">&#9776;</div><a class="sidebar-logo" href="../../blake2b_simd/index.html"><div class="logo-container"><img class="rust-logo" src="../../rust-logo.png" alt="logo"></div>
+        </a></nav><main><div class="width-limiter"><div class="sub-container"><a class="sub-logo-container" href="../../blake2b_simd/index.html"><img class="rust-logo" src="../../rust-logo.png" alt="logo"></a><nav class="sub"><div class="theme-picker"><button id="theme-picker" aria-label="Pick another theme!" aria-haspopup="menu" title="themes"><img width="18" height="18" alt="Pick another theme!" src="../../brush.svg"></button><div id="theme-choices" role="menu"></div></div><form class="search-form"><div class="search-container"><div><select id="crate-search"><option value="All crates">All crates</option></select><input class="search-input" name="search" autocomplete="off" spellcheck="false" placeholder="Click or press ‘S’ to search, ‘?’ for more options…" type="search"></div><button type="button" id="help-button" title="help">?</button><a id="settings-menu" href="../../settings.html" title="settings"><img width="18" height="18" alt="Change settings" src="../../wheel.svg"></a></div></form></nav></div><section id="main-content" class="content"><div class="example-wrap"><pre class="line-numbers"><span id="1">  1</span>
 <span id="2">  2</span>
 <span id="3">  3</span>
 <span id="4">  4</span>
@@ -590,7 +592,7 @@
 <span class="kw">pub</span> <span class="kw">struct</span> <span class="ident">Implementation</span>(<span class="ident">Platform</span>);
 
 <span class="kw">impl</span> <span class="ident">Implementation</span> {
-    <span class="kw">pub</span> <span class="kw">fn</span> <span class="ident">detect</span>() <span class="op">-</span><span class="op">&gt;</span> <span class="self">Self</span> {
+    <span class="kw">pub</span> <span class="kw">fn</span> <span class="ident">detect</span>() -&gt; <span class="self">Self</span> {
         <span class="comment">// Try the different implementations in order of how fast/modern they</span>
         <span class="comment">// are. Currently on non-x86, everything just uses portable.</span>
         <span class="attribute">#[<span class="ident">cfg</span>(<span class="ident">any</span>(<span class="ident">target_arch</span> <span class="op">=</span> <span class="string">&quot;x86&quot;</span>, <span class="ident">target_arch</span> <span class="op">=</span> <span class="string">&quot;x86_64&quot;</span>))]</span>
@@ -608,13 +610,13 @@
         <span class="ident"><span class="self">Self</span>::portable</span>()
     }
 
-    <span class="kw">pub</span> <span class="kw">fn</span> <span class="ident">portable</span>() <span class="op">-</span><span class="op">&gt;</span> <span class="self">Self</span> {
+    <span class="kw">pub</span> <span class="kw">fn</span> <span class="ident">portable</span>() -&gt; <span class="self">Self</span> {
         <span class="ident">Implementation</span>(<span class="ident">Platform::Portable</span>)
     }
 
     <span class="attribute">#[<span class="ident">cfg</span>(<span class="ident">any</span>(<span class="ident">target_arch</span> <span class="op">=</span> <span class="string">&quot;x86&quot;</span>, <span class="ident">target_arch</span> <span class="op">=</span> <span class="string">&quot;x86_64&quot;</span>))]</span>
     <span class="attribute">#[<span class="ident">allow</span>(<span class="ident">unreachable_code</span>)]</span>
-    <span class="kw">pub</span> <span class="kw">fn</span> <span class="ident">sse41_if_supported</span>() <span class="op">-</span><span class="op">&gt;</span> <span class="prelude-ty">Option</span><span class="op">&lt;</span><span class="self">Self</span><span class="op">&gt;</span> {
+    <span class="kw">pub</span> <span class="kw">fn</span> <span class="ident">sse41_if_supported</span>() -&gt; <span class="prelude-ty">Option</span><span class="op">&lt;</span><span class="self">Self</span><span class="op">&gt;</span> {
         <span class="comment">// Check whether SSE4.1 support is assumed by the build.</span>
         <span class="attribute">#[<span class="ident">cfg</span>(<span class="ident">target_feature</span> <span class="op">=</span> <span class="string">&quot;sse4.1&quot;</span>)]</span>
         {
@@ -632,7 +634,7 @@
 
     <span class="attribute">#[<span class="ident">cfg</span>(<span class="ident">any</span>(<span class="ident">target_arch</span> <span class="op">=</span> <span class="string">&quot;x86&quot;</span>, <span class="ident">target_arch</span> <span class="op">=</span> <span class="string">&quot;x86_64&quot;</span>))]</span>
     <span class="attribute">#[<span class="ident">allow</span>(<span class="ident">unreachable_code</span>)]</span>
-    <span class="kw">pub</span> <span class="kw">fn</span> <span class="ident">avx2_if_supported</span>() <span class="op">-</span><span class="op">&gt;</span> <span class="prelude-ty">Option</span><span class="op">&lt;</span><span class="self">Self</span><span class="op">&gt;</span> {
+    <span class="kw">pub</span> <span class="kw">fn</span> <span class="ident">avx2_if_supported</span>() -&gt; <span class="prelude-ty">Option</span><span class="op">&lt;</span><span class="self">Self</span><span class="op">&gt;</span> {
         <span class="comment">// Check whether AVX2 support is assumed by the build.</span>
         <span class="attribute">#[<span class="ident">cfg</span>(<span class="ident">target_feature</span> <span class="op">=</span> <span class="string">&quot;avx2&quot;</span>)]</span>
         {
@@ -648,20 +650,20 @@
         <span class="prelude-val">None</span>
     }
 
-    <span class="kw">pub</span> <span class="kw">fn</span> <span class="ident">degree</span>(<span class="kw-2">&amp;</span><span class="self">self</span>) <span class="op">-</span><span class="op">&gt;</span> <span class="ident">usize</span> {
+    <span class="kw">pub</span> <span class="kw">fn</span> <span class="ident">degree</span>(<span class="kw-2">&amp;</span><span class="self">self</span>) -&gt; <span class="ident">usize</span> {
         <span class="kw">match</span> <span class="self">self</span>.<span class="number">0</span> {
             <span class="attribute">#[<span class="ident">cfg</span>(<span class="ident">any</span>(<span class="ident">target_arch</span> <span class="op">=</span> <span class="string">&quot;x86&quot;</span>, <span class="ident">target_arch</span> <span class="op">=</span> <span class="string">&quot;x86_64&quot;</span>))]</span>
-            <span class="ident">Platform::AVX2</span> <span class="op">=</span><span class="op">&gt;</span> <span class="ident">avx2::DEGREE</span>,
+            <span class="ident">Platform::AVX2</span> =&gt; <span class="ident">avx2::DEGREE</span>,
             <span class="attribute">#[<span class="ident">cfg</span>(<span class="ident">any</span>(<span class="ident">target_arch</span> <span class="op">=</span> <span class="string">&quot;x86&quot;</span>, <span class="ident">target_arch</span> <span class="op">=</span> <span class="string">&quot;x86_64&quot;</span>))]</span>
-            <span class="ident">Platform::SSE41</span> <span class="op">=</span><span class="op">&gt;</span> <span class="ident">sse41::DEGREE</span>,
-            <span class="ident">Platform::Portable</span> <span class="op">=</span><span class="op">&gt;</span> <span class="number">1</span>,
+            <span class="ident">Platform::SSE41</span> =&gt; <span class="ident">sse41::DEGREE</span>,
+            <span class="ident">Platform::Portable</span> =&gt; <span class="number">1</span>,
         }
     }
 
     <span class="kw">pub</span> <span class="kw">fn</span> <span class="ident">compress1_loop</span>(
         <span class="kw-2">&amp;</span><span class="self">self</span>,
         <span class="ident">input</span>: <span class="kw-2">&amp;</span>[<span class="ident">u8</span>],
-        <span class="ident">words</span>: <span class="kw-2">&amp;</span><span class="kw-2">mut</span> [<span class="ident">Word</span>; <span class="number">8</span>],
+        <span class="ident">words</span>: <span class="kw-2">&amp;mut</span> [<span class="ident">Word</span>; <span class="number">8</span>],
         <span class="ident">count</span>: <span class="ident">Count</span>,
         <span class="ident">last_node</span>: <span class="ident">LastNode</span>,
         <span class="ident">finalize</span>: <span class="ident">Finalize</span>,
@@ -669,32 +671,32 @@
     ) {
         <span class="kw">match</span> <span class="self">self</span>.<span class="number">0</span> {
             <span class="attribute">#[<span class="ident">cfg</span>(<span class="ident">any</span>(<span class="ident">target_arch</span> <span class="op">=</span> <span class="string">&quot;x86&quot;</span>, <span class="ident">target_arch</span> <span class="op">=</span> <span class="string">&quot;x86_64&quot;</span>))]</span>
-            <span class="ident">Platform::AVX2</span> <span class="op">=</span><span class="op">&gt;</span> <span class="kw">unsafe</span> {
+            <span class="ident">Platform::AVX2</span> =&gt; <span class="kw">unsafe</span> {
                 <span class="ident">avx2::compress1_loop</span>(<span class="ident">input</span>, <span class="ident">words</span>, <span class="ident">count</span>, <span class="ident">last_node</span>, <span class="ident">finalize</span>, <span class="ident">stride</span>);
             },
             <span class="comment">// Note that there&#39;s an SSE version of compress1 in the official C</span>
             <span class="comment">// implementation, but I haven&#39;t ported it yet.</span>
-            <span class="kw">_</span> <span class="op">=</span><span class="op">&gt;</span> {
+            <span class="kw">_</span> =&gt; {
                 <span class="ident">portable::compress1_loop</span>(<span class="ident">input</span>, <span class="ident">words</span>, <span class="ident">count</span>, <span class="ident">last_node</span>, <span class="ident">finalize</span>, <span class="ident">stride</span>);
             }
         }
     }
 
-    <span class="kw">pub</span> <span class="kw">fn</span> <span class="ident">compress2_loop</span>(<span class="kw-2">&amp;</span><span class="self">self</span>, <span class="ident">jobs</span>: <span class="kw-2">&amp;</span><span class="kw-2">mut</span> [<span class="ident">Job</span>; <span class="number">2</span>], <span class="ident">finalize</span>: <span class="ident">Finalize</span>, <span class="ident">stride</span>: <span class="ident">Stride</span>) {
+    <span class="kw">pub</span> <span class="kw">fn</span> <span class="ident">compress2_loop</span>(<span class="kw-2">&amp;</span><span class="self">self</span>, <span class="ident">jobs</span>: <span class="kw-2">&amp;mut</span> [<span class="ident">Job</span>; <span class="number">2</span>], <span class="ident">finalize</span>: <span class="ident">Finalize</span>, <span class="ident">stride</span>: <span class="ident">Stride</span>) {
         <span class="kw">match</span> <span class="self">self</span>.<span class="number">0</span> {
             <span class="attribute">#[<span class="ident">cfg</span>(<span class="ident">any</span>(<span class="ident">target_arch</span> <span class="op">=</span> <span class="string">&quot;x86&quot;</span>, <span class="ident">target_arch</span> <span class="op">=</span> <span class="string">&quot;x86_64&quot;</span>))]</span>
-            <span class="ident">Platform::AVX2</span> <span class="op">|</span> <span class="ident">Platform::SSE41</span> <span class="op">=</span><span class="op">&gt;</span> <span class="kw">unsafe</span> {
+            <span class="ident">Platform::AVX2</span> <span class="op">|</span> <span class="ident">Platform::SSE41</span> =&gt; <span class="kw">unsafe</span> {
                 <span class="ident">sse41::compress2_loop</span>(<span class="ident">jobs</span>, <span class="ident">finalize</span>, <span class="ident">stride</span>)
             },
-            <span class="kw">_</span> <span class="op">=</span><span class="op">&gt;</span> <span class="macro">panic!</span>(<span class="string">&quot;unsupported&quot;</span>),
+            <span class="kw">_</span> =&gt; <span class="macro">panic!</span>(<span class="string">&quot;unsupported&quot;</span>),
         }
     }
 
-    <span class="kw">pub</span> <span class="kw">fn</span> <span class="ident">compress4_loop</span>(<span class="kw-2">&amp;</span><span class="self">self</span>, <span class="ident">jobs</span>: <span class="kw-2">&amp;</span><span class="kw-2">mut</span> [<span class="ident">Job</span>; <span class="number">4</span>], <span class="ident">finalize</span>: <span class="ident">Finalize</span>, <span class="ident">stride</span>: <span class="ident">Stride</span>) {
+    <span class="kw">pub</span> <span class="kw">fn</span> <span class="ident">compress4_loop</span>(<span class="kw-2">&amp;</span><span class="self">self</span>, <span class="ident">jobs</span>: <span class="kw-2">&amp;mut</span> [<span class="ident">Job</span>; <span class="number">4</span>], <span class="ident">finalize</span>: <span class="ident">Finalize</span>, <span class="ident">stride</span>: <span class="ident">Stride</span>) {
         <span class="kw">match</span> <span class="self">self</span>.<span class="number">0</span> {
             <span class="attribute">#[<span class="ident">cfg</span>(<span class="ident">any</span>(<span class="ident">target_arch</span> <span class="op">=</span> <span class="string">&quot;x86&quot;</span>, <span class="ident">target_arch</span> <span class="op">=</span> <span class="string">&quot;x86_64&quot;</span>))]</span>
-            <span class="ident">Platform::AVX2</span> <span class="op">=</span><span class="op">&gt;</span> <span class="kw">unsafe</span> { <span class="ident">avx2::compress4_loop</span>(<span class="ident">jobs</span>, <span class="ident">finalize</span>, <span class="ident">stride</span>) },
-            <span class="kw">_</span> <span class="op">=</span><span class="op">&gt;</span> <span class="macro">panic!</span>(<span class="string">&quot;unsupported&quot;</span>),
+            <span class="ident">Platform::AVX2</span> =&gt; <span class="kw">unsafe</span> { <span class="ident">avx2::compress4_loop</span>(<span class="ident">jobs</span>, <span class="ident">finalize</span>, <span class="ident">stride</span>) },
+            <span class="kw">_</span> =&gt; <span class="macro">panic!</span>(<span class="string">&quot;unsupported&quot;</span>),
         }
     }
 }
@@ -707,7 +709,7 @@
 }
 
 <span class="kw">impl</span><span class="op">&lt;</span><span class="lifetime">&#39;a</span>, <span class="lifetime">&#39;b</span><span class="op">&gt;</span> <span class="ident">core::fmt::Debug</span> <span class="kw">for</span> <span class="ident">Job</span><span class="op">&lt;</span><span class="lifetime">&#39;a</span>, <span class="lifetime">&#39;b</span><span class="op">&gt;</span> {
-    <span class="kw">fn</span> <span class="ident">fmt</span>(<span class="kw-2">&amp;</span><span class="self">self</span>, <span class="ident">f</span>: <span class="kw-2">&amp;</span><span class="kw-2">mut</span> <span class="ident">fmt::Formatter</span>) <span class="op">-</span><span class="op">&gt;</span> <span class="ident">fmt::Result</span> {
+    <span class="kw">fn</span> <span class="ident">fmt</span>(<span class="kw-2">&amp;</span><span class="self">self</span>, <span class="ident">f</span>: <span class="kw-2">&amp;mut</span> <span class="ident">fmt::Formatter</span>) -&gt; <span class="ident">fmt::Result</span> {
         <span class="comment">// NB: Don&#39;t print the words. Leaking them would allow length extension.</span>
         <span class="macro">write!</span>(
             <span class="ident">f</span>,
@@ -727,10 +729,10 @@
 }
 
 <span class="kw">impl</span> <span class="ident">Finalize</span> {
-    <span class="kw">pub</span> <span class="kw">fn</span> <span class="ident">yes</span>(<span class="kw-2">&amp;</span><span class="self">self</span>) <span class="op">-</span><span class="op">&gt;</span> <span class="ident">bool</span> {
+    <span class="kw">pub</span> <span class="kw">fn</span> <span class="ident">yes</span>(<span class="kw-2">&amp;</span><span class="self">self</span>) -&gt; <span class="ident">bool</span> {
         <span class="kw">match</span> <span class="self">self</span> {
-            <span class="ident">Finalize::Yes</span> <span class="op">=</span><span class="op">&gt;</span> <span class="bool-val">true</span>,
-            <span class="ident">Finalize::No</span> <span class="op">=</span><span class="op">&gt;</span> <span class="bool-val">false</span>,
+            <span class="ident">Finalize::Yes</span> =&gt; <span class="bool-val">true</span>,
+            <span class="ident">Finalize::No</span> =&gt; <span class="bool-val">false</span>,
         }
     }
 }
@@ -743,10 +745,10 @@
 }
 
 <span class="kw">impl</span> <span class="ident">LastNode</span> {
-    <span class="kw">pub</span> <span class="kw">fn</span> <span class="ident">yes</span>(<span class="kw-2">&amp;</span><span class="self">self</span>) <span class="op">-</span><span class="op">&gt;</span> <span class="ident">bool</span> {
+    <span class="kw">pub</span> <span class="kw">fn</span> <span class="ident">yes</span>(<span class="kw-2">&amp;</span><span class="self">self</span>) -&gt; <span class="ident">bool</span> {
         <span class="kw">match</span> <span class="self">self</span> {
-            <span class="ident">LastNode::Yes</span> <span class="op">=</span><span class="op">&gt;</span> <span class="bool-val">true</span>,
-            <span class="ident">LastNode::No</span> <span class="op">=</span><span class="op">&gt;</span> <span class="bool-val">false</span>,
+            <span class="ident">LastNode::Yes</span> =&gt; <span class="bool-val">true</span>,
+            <span class="ident">LastNode::No</span> =&gt; <span class="bool-val">false</span>,
         }
     }
 }
@@ -758,27 +760,27 @@
 }
 
 <span class="kw">impl</span> <span class="ident">Stride</span> {
-    <span class="kw">pub</span> <span class="kw">fn</span> <span class="ident">padded_blockbytes</span>(<span class="kw-2">&amp;</span><span class="self">self</span>) <span class="op">-</span><span class="op">&gt;</span> <span class="ident">usize</span> {
+    <span class="kw">pub</span> <span class="kw">fn</span> <span class="ident">padded_blockbytes</span>(<span class="kw-2">&amp;</span><span class="self">self</span>) -&gt; <span class="ident">usize</span> {
         <span class="kw">match</span> <span class="self">self</span> {
-            <span class="ident">Stride::Serial</span> <span class="op">=</span><span class="op">&gt;</span> <span class="ident">BLOCKBYTES</span>,
-            <span class="ident">Stride::Parallel</span> <span class="op">=</span><span class="op">&gt;</span> <span class="ident">blake2bp::DEGREE</span> <span class="op">*</span> <span class="ident">BLOCKBYTES</span>,
+            <span class="ident">Stride::Serial</span> =&gt; <span class="ident">BLOCKBYTES</span>,
+            <span class="ident">Stride::Parallel</span> =&gt; <span class="ident">blake2bp::DEGREE</span> <span class="op">*</span> <span class="ident">BLOCKBYTES</span>,
         }
     }
 }
 
-<span class="kw">pub</span>(<span class="kw">crate</span>) <span class="kw">fn</span> <span class="ident">count_low</span>(<span class="ident">count</span>: <span class="ident">Count</span>) <span class="op">-</span><span class="op">&gt;</span> <span class="ident">Word</span> {
+<span class="kw">pub</span>(<span class="kw">crate</span>) <span class="kw">fn</span> <span class="ident">count_low</span>(<span class="ident">count</span>: <span class="ident">Count</span>) -&gt; <span class="ident">Word</span> {
     <span class="ident">count</span> <span class="kw">as</span> <span class="ident">Word</span>
 }
 
-<span class="kw">pub</span>(<span class="kw">crate</span>) <span class="kw">fn</span> <span class="ident">count_high</span>(<span class="ident">count</span>: <span class="ident">Count</span>) <span class="op">-</span><span class="op">&gt;</span> <span class="ident">Word</span> {
+<span class="kw">pub</span>(<span class="kw">crate</span>) <span class="kw">fn</span> <span class="ident">count_high</span>(<span class="ident">count</span>: <span class="ident">Count</span>) -&gt; <span class="ident">Word</span> {
     (<span class="ident">count</span> <span class="op">&gt;</span><span class="op">&gt;</span> <span class="number">8</span> <span class="op">*</span> <span class="ident">size_of</span>::<span class="op">&lt;</span><span class="ident">Word</span><span class="op">&gt;</span>()) <span class="kw">as</span> <span class="ident">Word</span>
 }
 
-<span class="kw">pub</span>(<span class="kw">crate</span>) <span class="kw">fn</span> <span class="ident">assemble_count</span>(<span class="ident">low</span>: <span class="ident">Word</span>, <span class="ident">high</span>: <span class="ident">Word</span>) <span class="op">-</span><span class="op">&gt;</span> <span class="ident">Count</span> {
+<span class="kw">pub</span>(<span class="kw">crate</span>) <span class="kw">fn</span> <span class="ident">assemble_count</span>(<span class="ident">low</span>: <span class="ident">Word</span>, <span class="ident">high</span>: <span class="ident">Word</span>) -&gt; <span class="ident">Count</span> {
     <span class="ident">low</span> <span class="kw">as</span> <span class="ident">Count</span> <span class="op">+</span> ((<span class="ident">high</span> <span class="kw">as</span> <span class="ident">Count</span>) <span class="op">&lt;</span><span class="op">&lt;</span> <span class="number">8</span> <span class="op">*</span> <span class="ident">size_of</span>::<span class="op">&lt;</span><span class="ident">Word</span><span class="op">&gt;</span>())
 }
 
-<span class="kw">pub</span>(<span class="kw">crate</span>) <span class="kw">fn</span> <span class="ident">flag_word</span>(<span class="ident">flag</span>: <span class="ident">bool</span>) <span class="op">-</span><span class="op">&gt;</span> <span class="ident">Word</span> {
+<span class="kw">pub</span>(<span class="kw">crate</span>) <span class="kw">fn</span> <span class="ident">flag_word</span>(<span class="ident">flag</span>: <span class="ident">bool</span>) -&gt; <span class="ident">Word</span> {
     <span class="kw">if</span> <span class="ident">flag</span> {
         <span class="op">!</span><span class="number">0</span>
     } <span class="kw">else</span> {
@@ -798,7 +800,7 @@
     <span class="ident">offset</span>: <span class="ident">usize</span>,
     <span class="ident">buffer</span>: <span class="kw-2">&amp;</span><span class="lifetime">&#39;a</span> <span class="kw-2">mut</span> [<span class="ident">u8</span>; <span class="ident">BLOCKBYTES</span>],
     <span class="ident">stride</span>: <span class="ident">Stride</span>,
-) <span class="op">-</span><span class="op">&gt;</span> (<span class="kw-2">&amp;</span><span class="lifetime">&#39;a</span> [<span class="ident">u8</span>; <span class="ident">BLOCKBYTES</span>], <span class="ident">usize</span>, <span class="ident">bool</span>) {
+) -&gt; (<span class="kw-2">&amp;</span><span class="lifetime">&#39;a</span> [<span class="ident">u8</span>; <span class="ident">BLOCKBYTES</span>], <span class="ident">usize</span>, <span class="ident">bool</span>) {
     <span class="kw">let</span> <span class="ident">capped_offset</span> <span class="op">=</span> <span class="ident">cmp::min</span>(<span class="ident">offset</span>, <span class="ident">input</span>.<span class="ident">len</span>());
     <span class="kw">let</span> <span class="ident">offset_slice</span> <span class="op">=</span> <span class="kw-2">&amp;</span><span class="ident">input</span>[<span class="ident">capped_offset</span>..];
     <span class="kw">if</span> <span class="ident">offset_slice</span>.<span class="ident">len</span>() <span class="op">&gt;</span><span class="op">=</span> <span class="ident">BLOCKBYTES</span> {
@@ -891,7 +893,7 @@
             <span class="kw">for</span> <span class="kw-2">&amp;</span><span class="ident">length</span> <span class="kw">in</span> <span class="kw-2">&amp;</span><span class="ident">lengths</span> {
                 <span class="kw">for</span> <span class="kw-2">&amp;</span><span class="ident">last_node</span> <span class="kw">in</span> <span class="kw-2">&amp;</span>[<span class="ident">LastNode::No</span>, <span class="ident">LastNode::Yes</span>] {
                     <span class="kw">for</span> <span class="kw-2">&amp;</span><span class="ident">finalize</span> <span class="kw">in</span> <span class="kw-2">&amp;</span>[<span class="ident">Finalize::No</span>, <span class="ident">Finalize::Yes</span>] {
-                        <span class="kw">if</span> <span class="op">!</span><span class="ident">finalize</span>.<span class="ident">yes</span>() <span class="op">&amp;&amp;</span> (<span class="ident">length</span> <span class="op">=</span><span class="op">=</span> <span class="number">0</span> <span class="op">|</span><span class="op">|</span> <span class="ident">length</span> <span class="op">%</span> <span class="ident">BLOCKBYTES</span> <span class="op">!</span><span class="op">=</span> <span class="number">0</span>) {
+                        <span class="kw">if</span> <span class="op">!</span><span class="ident">finalize</span>.<span class="ident">yes</span>() <span class="op">&amp;&amp;</span> (<span class="ident">length</span> <span class="op">==</span> <span class="number">0</span> <span class="op">|</span><span class="op">|</span> <span class="ident">length</span> <span class="op">%</span> <span class="ident">BLOCKBYTES</span> <span class="op">!</span><span class="op">=</span> <span class="number">0</span>) {
                             <span class="comment">// Skip these cases, they&#39;re invalid.</span>
                             <span class="kw">continue</span>;
                         }
@@ -911,7 +913,7 @@
         }
     }
 
-    <span class="kw">fn</span> <span class="ident">initial_test_words</span>(<span class="ident">input_index</span>: <span class="ident">usize</span>) <span class="op">-</span><span class="op">&gt;</span> [<span class="ident">Word</span>; <span class="number">8</span>] {
+    <span class="kw">fn</span> <span class="ident">initial_test_words</span>(<span class="ident">input_index</span>: <span class="ident">usize</span>) -&gt; [<span class="ident">Word</span>; <span class="number">8</span>] {
         <span class="ident"><span class="kw">crate</span>::Params::new</span>()
             .<span class="ident">node_offset</span>(<span class="ident">input_index</span> <span class="kw">as</span> <span class="ident">u64</span>)
             .<span class="ident">to_words</span>()
@@ -926,10 +928,10 @@
         <span class="ident">finalize</span>: <span class="ident">Finalize</span>,
         <span class="kw-2">mut</span> <span class="ident">count</span>: <span class="ident">Count</span>,
         <span class="ident">input_index</span>: <span class="ident">usize</span>,
-    ) <span class="op">-</span><span class="op">&gt;</span> [<span class="ident">Word</span>; <span class="number">8</span>] {
+    ) -&gt; [<span class="ident">Word</span>; <span class="number">8</span>] {
         <span class="kw">let</span> <span class="kw-2">mut</span> <span class="ident">words</span> <span class="op">=</span> <span class="ident">initial_test_words</span>(<span class="ident">input_index</span>);
         <span class="kw">let</span> <span class="kw-2">mut</span> <span class="ident">offset</span> <span class="op">=</span> <span class="number">0</span>;
-        <span class="kw">while</span> <span class="ident">offset</span> <span class="op">=</span><span class="op">=</span> <span class="number">0</span> <span class="op">|</span><span class="op">|</span> <span class="ident">offset</span> <span class="op">&lt;</span> <span class="ident">input</span>.<span class="ident">len</span>() {
+        <span class="kw">while</span> <span class="ident">offset</span> <span class="op">==</span> <span class="number">0</span> <span class="op">|</span><span class="op">|</span> <span class="ident">offset</span> <span class="op">&lt;</span> <span class="ident">input</span>.<span class="ident">len</span>() {
             <span class="kw">let</span> <span class="ident">block_size</span> <span class="op">=</span> <span class="ident">cmp::min</span>(<span class="ident">BLOCKBYTES</span>, <span class="ident">input</span>.<span class="ident">len</span>() <span class="op">-</span> <span class="ident">offset</span>);
             <span class="kw">let</span> <span class="ident">maybe_finalize</span> <span class="op">=</span> <span class="kw">if</span> <span class="ident">offset</span> <span class="op">+</span> <span class="ident">stride</span>.<span class="ident">padded_blockbytes</span>() <span class="op">&lt;</span> <span class="ident">input</span>.<span class="ident">len</span>() {
                 <span class="ident">Finalize::No</span>
@@ -938,7 +940,7 @@
             };
             <span class="ident">portable::compress1_loop</span>(
                 <span class="kw-2">&amp;</span><span class="ident">input</span>[<span class="ident">offset</span>..][..<span class="ident">block_size</span>],
-                <span class="kw-2">&amp;</span><span class="kw-2">mut</span> <span class="ident">words</span>,
+                <span class="kw-2">&amp;mut</span> <span class="ident">words</span>,
                 <span class="ident">count</span>,
                 <span class="ident">last_node</span>,
                 <span class="ident">maybe_finalize</span>,
@@ -958,7 +960,7 @@
     <span class="comment">// the blake2-kat.json file (copied from upstream) and tested elsewhere.</span>
     <span class="kw">fn</span> <span class="ident">exercise_compress1_loop</span>(<span class="ident">implementation</span>: <span class="ident">Implementation</span>) {
         <span class="kw">let</span> <span class="kw-2">mut</span> <span class="ident">input</span> <span class="op">=</span> [<span class="number">0</span>; <span class="number">100</span> <span class="op">*</span> <span class="ident">BLOCKBYTES</span>];
-        <span class="ident">paint_test_input</span>(<span class="kw-2">&amp;</span><span class="kw-2">mut</span> <span class="ident">input</span>);
+        <span class="ident">paint_test_input</span>(<span class="kw-2">&amp;mut</span> <span class="ident">input</span>);
 
         <span class="ident">exercise_cases</span>(<span class="op">|</span><span class="ident">stride</span>, <span class="ident">length</span>, <span class="ident">last_node</span>, <span class="ident">finalize</span>, <span class="ident">count</span><span class="op">|</span> {
             <span class="kw">let</span> <span class="ident">reference_words</span> <span class="op">=</span>
@@ -967,7 +969,7 @@
             <span class="kw">let</span> <span class="kw-2">mut</span> <span class="ident">test_words</span> <span class="op">=</span> <span class="ident">initial_test_words</span>(<span class="number">0</span>);
             <span class="ident">implementation</span>.<span class="ident">compress1_loop</span>(
                 <span class="kw-2">&amp;</span><span class="ident">input</span>[..<span class="ident">length</span>],
-                <span class="kw-2">&amp;</span><span class="kw-2">mut</span> <span class="ident">test_words</span>,
+                <span class="kw-2">&amp;mut</span> <span class="ident">test_words</span>,
                 <span class="ident">count</span>,
                 <span class="ident">last_node</span>,
                 <span class="ident">finalize</span>,
@@ -1008,7 +1010,7 @@
         <span class="kw">const</span> <span class="ident">N</span>: <span class="ident">usize</span> <span class="op">=</span> <span class="number">2</span>;
 
         <span class="kw">let</span> <span class="kw-2">mut</span> <span class="ident">input_buffer</span> <span class="op">=</span> [<span class="number">0</span>; <span class="number">100</span> <span class="op">*</span> <span class="ident">BLOCKBYTES</span>];
-        <span class="ident">paint_test_input</span>(<span class="kw-2">&amp;</span><span class="kw-2">mut</span> <span class="ident">input_buffer</span>);
+        <span class="ident">paint_test_input</span>(<span class="kw-2">&amp;mut</span> <span class="ident">input_buffer</span>);
         <span class="kw">let</span> <span class="kw-2">mut</span> <span class="ident">inputs</span> <span class="op">=</span> <span class="ident">ArrayVec</span>::<span class="op">&lt;</span>[<span class="kw">_</span>; <span class="ident">N</span>]<span class="op">&gt;</span><span class="ident">::new</span>();
         <span class="kw">for</span> <span class="ident">i</span> <span class="kw">in</span> <span class="number">0</span>..<span class="ident">N</span> {
             <span class="ident">inputs</span>.<span class="ident">push</span>(<span class="kw-2">&amp;</span><span class="ident">input_buffer</span>[<span class="ident">i</span>..]);
@@ -1042,7 +1044,7 @@
                 });
             }
             <span class="kw">let</span> <span class="kw-2">mut</span> <span class="ident">jobs</span> <span class="op">=</span> <span class="ident">jobs</span>.<span class="ident">into_inner</span>().<span class="ident">expect</span>(<span class="string">&quot;full&quot;</span>);
-            <span class="ident">implementation</span>.<span class="ident">compress2_loop</span>(<span class="kw-2">&amp;</span><span class="kw-2">mut</span> <span class="ident">jobs</span>, <span class="ident">finalize</span>, <span class="ident">stride</span>);
+            <span class="ident">implementation</span>.<span class="ident">compress2_loop</span>(<span class="kw-2">&amp;mut</span> <span class="ident">jobs</span>, <span class="ident">finalize</span>, <span class="ident">stride</span>);
 
             <span class="kw">for</span> <span class="ident">i</span> <span class="kw">in</span> <span class="number">0</span>..<span class="ident">N</span> {
                 <span class="macro">assert_eq!</span>(<span class="ident">reference_words</span>[<span class="ident">i</span>], <span class="ident">test_words</span>[<span class="ident">i</span>], <span class="string">&quot;words {} unequal&quot;</span>, <span class="ident">i</span>);
@@ -1073,7 +1075,7 @@
         <span class="kw">const</span> <span class="ident">N</span>: <span class="ident">usize</span> <span class="op">=</span> <span class="number">4</span>;
 
         <span class="kw">let</span> <span class="kw-2">mut</span> <span class="ident">input_buffer</span> <span class="op">=</span> [<span class="number">0</span>; <span class="number">100</span> <span class="op">*</span> <span class="ident">BLOCKBYTES</span>];
-        <span class="ident">paint_test_input</span>(<span class="kw-2">&amp;</span><span class="kw-2">mut</span> <span class="ident">input_buffer</span>);
+        <span class="ident">paint_test_input</span>(<span class="kw-2">&amp;mut</span> <span class="ident">input_buffer</span>);
         <span class="kw">let</span> <span class="kw-2">mut</span> <span class="ident">inputs</span> <span class="op">=</span> <span class="ident">ArrayVec</span>::<span class="op">&lt;</span>[<span class="kw">_</span>; <span class="ident">N</span>]<span class="op">&gt;</span><span class="ident">::new</span>();
         <span class="kw">for</span> <span class="ident">i</span> <span class="kw">in</span> <span class="number">0</span>..<span class="ident">N</span> {
             <span class="ident">inputs</span>.<span class="ident">push</span>(<span class="kw-2">&amp;</span><span class="ident">input_buffer</span>[<span class="ident">i</span>..]);
@@ -1107,7 +1109,7 @@
                 });
             }
             <span class="kw">let</span> <span class="kw-2">mut</span> <span class="ident">jobs</span> <span class="op">=</span> <span class="ident">jobs</span>.<span class="ident">into_inner</span>().<span class="ident">expect</span>(<span class="string">&quot;full&quot;</span>);
-            <span class="ident">implementation</span>.<span class="ident">compress4_loop</span>(<span class="kw-2">&amp;</span><span class="kw-2">mut</span> <span class="ident">jobs</span>, <span class="ident">finalize</span>, <span class="ident">stride</span>);
+            <span class="ident">implementation</span>.<span class="ident">compress4_loop</span>(<span class="kw-2">&amp;mut</span> <span class="ident">jobs</span>, <span class="ident">finalize</span>, <span class="ident">stride</span>);
 
             <span class="kw">for</span> <span class="ident">i</span> <span class="kw">in</span> <span class="number">0</span>..<span class="ident">N</span> {
                 <span class="macro">assert_eq!</span>(<span class="ident">reference_words</span>[<span class="ident">i</span>], <span class="ident">test_words</span>[<span class="ident">i</span>], <span class="string">&quot;words {} unequal&quot;</span>, <span class="ident">i</span>);
@@ -1129,6 +1131,5 @@
     }
 }
 </code></pre></div>
-</section><section id="search" class="content hidden"></section><div id="rustdoc-vars" data-root-path="../../" data-current-crate="blake2b_simd" data-search-index-js="../../search-index.js" data-search-js="../../search.js"></div>
-    <script src="../../main.js"></script><script src="../../source-script.js"></script><script src="../../source-files.js"></script>
+</section><section id="search" class="content hidden"></section></div></main><div id="rustdoc-vars" data-root-path="../../" data-current-crate="blake2b_simd" data-themes="ayu,dark,light" data-resource-suffix="" data-rustdoc-version="1.59.0 (9d1b2106e 2022-02-23)" ></div>
 </body></html>
