@@ -18,8 +18,8 @@ pub use error::*;
 
 impl<'a, H, S> Entry<H, S>
 where
-    H: Borrow<[u8]>,
-    S: Borrow<[u8]>,
+    H: Borrow<[u8]> + Clone,
+    S: Borrow<[u8]> + Clone,
 {
     /// Verify the signature of an entry is valid.
     pub fn verify_signature(&self) -> Result<()> {

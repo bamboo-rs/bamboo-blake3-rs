@@ -18,7 +18,7 @@ use snafu::ensure;
 pub mod error;
 pub use error::*;
 
-#[derive(Debug, Serialize, Deserialize, Eq, PartialEq)]
+#[derive(Debug, Clone, Serialize, Deserialize, Eq, PartialEq)]
 pub struct Signature<B: Borrow<[u8]>>(
     #[cfg_attr(
         feature = "std",

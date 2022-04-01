@@ -45,12 +45,12 @@ const_assert_eq!(max_entry_size; MAX_ENTRY_SIZE_ as isize, MAX_ENTRY_SIZE as isi
 
 #[cfg_attr(feature = "std", derive(Deserialize, Serialize))]
 #[cfg_attr(feature = "std", serde(rename_all = "camelCase"))]
-#[derive(Debug, Eq, PartialEq)]
+#[derive(Debug, Eq, PartialEq, Clone)]
 #[repr(C)]
 pub struct Entry<H, S>
 where
-    H: Borrow<[u8]>,
-    S: Borrow<[u8]>,
+    H: Borrow<[u8]> + Clone,
+    S: Borrow<[u8]> + Clone,
 {
     pub log_id: u64,
     pub is_end_of_feed: bool,
@@ -82,8 +82,8 @@ impl<'a> TryFrom<&'a [u8]> for Entry<&'a [u8], &'a [u8]> {
 
 impl<'a, H, S> TryFrom<Entry<H, S>> for ArrayVec<[u8; 512]>
 where
-    H: Borrow<[u8]>,
-    S: Borrow<[u8]>,
+    H: Borrow<[u8]> + Clone,
+    S: Borrow<[u8]> + Clone,
 {
     type Error = encode::Error;
 
@@ -100,8 +100,8 @@ where
 
 pub fn into_owned<H, S>(entry: &Entry<H, S>) -> Entry<ArrayVec<[u8; 32]>, ArrayVec<[u8; 64]>>
 where
-    H: Borrow<[u8]>,
-    S: Borrow<[u8]>,
+    H: Borrow<[u8]> + Clone,
+    S: Borrow<[u8]> + Clone,
 {
     let sig = match entry.sig {
         Some(Signature(ref s)) => {

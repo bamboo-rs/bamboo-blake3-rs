@@ -14,8 +14,8 @@ pub use error::*;
 
 impl<'a, H, S> Entry<H, S>
 where
-    H: Borrow<[u8]>,
-    S: Borrow<[u8]>,
+    H: Borrow<[u8]> + Clone,
+    S: Borrow<[u8]> + Clone,
 {
     pub fn encode(&self, out: &mut [u8]) -> Result<usize, Error> {
         let mut next_byte_num = self.encode_for_signing(out)?;
